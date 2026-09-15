@@ -27,6 +27,16 @@ function openClubPicker(){
   document.querySelectorAll('[data-club]').forEach(b=>b.onclick=()=>startCareer(b.dataset.club));
 }
 function startCareer(id){ club=world.clubs.find(c=>c.id===id); state=createCareer(club,world,allPlayers); closeModal(); render(); }
+function careerMenu(){
+  showModal(`<div class="modal-head"><div><div class="eyebrow">Career controls</div><h2 style="margin:4px 0 0">${esc(club.name)}</h2></div><button class="btn" data-close>Close</button></div><div class="modal-body"><div class="list"><div class="list-row"><div><strong>Chairman HQ</strong><small>Return to your ownership dashboard.</small></div><button class="btn" data-menu-view="hq">Open</button></div><div class="list-row"><div><strong>New Career</strong><small>Choose another club and begin a fresh save.</small></div><button class="btn" data-action="newCareer">Start</button></div><div class="list-row"><div><strong>Exit to Main Menu</strong><small>Your current career remains saved.</small></div><button class="btn btn-primary" data-action="exitCareer">Exit</button></div></div></div>`);
+  bind();
+}
+function confirmExit(){
+  showModal(`<div class="modal-head"><div><div class="eyebrow">Leave career</div><h2 style="margin:4px 0 0">Return to the main menu?</h2></div><button class="btn" data-close>Cancel</button></div><div class="modal-body"><div class="notice">Your career is saved automatically. You can continue it later or start a new career from the main menu.</div><div class="actions" style="margin-top:18px"><button class="btn" data-close>Continue Career</button><button class="btn btn-primary" data-action="exitCareerConfirm">Exit to Main Menu</button></div></div>`);
+  bind();
+}
+function exitCareer(){ closeModal(); confirmExit(); }
+function exitCareerConfirm(){ closeModal(); state=null; club=null; renderStart(); }
 function negotiate(name,value){
   showModal(`<div class="modal-head"><div><div class="eyebrow">Transfer room</div><h2 style="margin:4px 0 0">Negotiation: ${esc(name)}</h2></div><button class="btn" data-close>Exit</button></div><div class="modal-body"><div class="notice">The selling club knows your budget. The agent knows your ambition. Decide how hard you want to push.</div><div class="grid grid-2" style="margin-top:16px"><div class="card card-pad"><div class="stat-label">Opening fee</div><div class="stat-value">${money(value)}</div><div class="stat-note">Market expectation</div></div><div class="card card-pad"><div class="stat-label">Your budget</div><div class="stat-value">${money(state.transferBudget)}</div><div class="stat-note">Before deal structure</div></div></div><div class="actions" style="margin-top:18px"><button class="btn" data-deal="low">Test the market</button><button class="btn btn-primary" data-deal="fair">Make a fair offer</button><button class="btn" data-deal="aggressive">Overpay to close it</button></div></div>`);
   document.querySelectorAll('[data-deal]').forEach(b=>b.onclick=()=>deal(b.dataset.deal,name,value));
@@ -40,12 +50,16 @@ function deal(type,name,value){
 }
 function bind(){
   document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{state.activeView=b.dataset.view;render();});
+  document.querySelectorAll('[data-menu-view]').forEach(b=>b.onclick=()=>{closeModal();state.activeView=b.dataset.menuView;render();});
   document.querySelectorAll('[data-action]').forEach(b=>b.onclick=()=>action(b.dataset.action,b));
   document.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeModal);
 }
 function action(a,b){
-  if(a==='newCareer') return openClubPicker();
+  if(a==='careerMenu') return careerMenu();
+  if(a==='newCareer'){ closeModal(); return openClubPicker(); }
   if(a==='continue'){const saved=loadGame(); if(saved){state=saved;club=world.clubs.find(c=>c.id===state.clubId); if(club)render(); else renderStart();}else alert('No saved career found.');return;}
+  if(a==='exitCareer') return exitCareer();
+  if(a==='exitCareerConfirm') return exitCareerConfirm();
   if(a==='advance'){state=advanceWeek(state,world);render();return;}
   if(a==='negotiate') return negotiate(b.dataset.player,Number(b.dataset.value));
   if(a==='protectCash'){state.cash+=5000000;state.transferBudget=Math.max(0,state.transferBudget-5000000);state.boardConfidence=Math.min(100,state.boardConfidence+2);state.news.unshift({week:state.week,title:'Cash protection plan approved',text:'The board welcomes a more conservative financial position.'});render();return;}
