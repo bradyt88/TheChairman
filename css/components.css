@@ -19,6 +19,7 @@
 .btn:hover { border-color: rgba(216,175,78,.38); transform: translateY(-1px); }
 .btn-primary { background: linear-gradient(135deg, #e1bb61, #b98d35); color: #15100a; border-color: transparent; }
 .btn-ghost { background: transparent; }
+.btn:disabled { opacity:.45; cursor:not-allowed; transform:none; }
 .actions { display:flex; gap: 8px; flex-wrap: wrap; }
 .section-title { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom: 12px; }
 .section-title h2 { font-size: 14px; text-transform: uppercase; letter-spacing: .13em; margin: 0; }
@@ -56,3 +57,9 @@
 .kpi-value { margin-top:5px; font-size:18px; font-weight:800; }
 .hero-mark { position:absolute; right:7%; top:14%; width:180px; height:180px; border:1px solid rgba(216,175,78,.18); border-radius:50%; box-shadow:0 0 0 22px rgba(216,175,78,.025),0 0 0 44px rgba(216,175,78,.015); }
 .hero-mark::after { content:"TC"; position:absolute; inset:0; display:grid; place-items:center; color:rgba(240,213,138,.35); font-size:44px; font-weight:900; letter-spacing:.08em; }
+
+/* Production modal: app.js mounts #modal directly on body. */
+#modal { position:fixed; inset:0; display:none; place-items:center; padding:20px; background:rgba(0,0,0,.74); backdrop-filter:blur(10px); z-index:1000; overflow:auto; }
+#modal.open { display:grid; }
+#modal .modal-panel { width:min(680px,100%); max-height:90vh; overflow:auto; background:#0c1118; border:1px solid var(--line-strong); border-radius:20px; box-shadow:0 40px 100px rgba(0,0,0,.55); }
+@media (max-width:560px) { #modal { padding:10px; } #modal .modal-panel { max-height:94vh; border-radius:16px; } }
