@@ -27,6 +27,36 @@ function attendanceFor(state,club,opponent,home=true) {
   return Math.round(capacity*fill);
 }
 
+function transferSeedScore(player,week,index) {
+  const base=(Number(player.overall)||50)*0.7+(Number(player.potential)||Number(player.overall)||50)*0.25+(Number(player.value)||0)/100000000;
+  return base+seededVariation((week+1)*31+(index+1)*17+(Number(player.age)||20))*8;
+}
+
+export function refreshTransferMarket(state,world,force=false) {
+  const allPlayers=world?.players||[];
+  const existing=Array.isArray(state.transferMarket)?state.transferMarket:[];
+  const unavailable=new Set((state.players||[]).map(p=>p.id));
+  const availablePlayers=allPlayers.filter(p=>!unavailable.has(p.id));
+  if(!availablePlayers.length)return existing;
+  if(!force && state.week<=1 && existing.length)return existing;
+
+  const ranked=availablePlayers
+    .map((p,i)=>({p,score:transferSeedScore(p,state.week,i)}))
+    .sort((a,b)=>b.score-a.score);
+  const locked=existing.filter(x=>x.status==='negotiating').map(x=>x.playerId);
+  const keepCount=Math.min(4,existing.length);
+  const keep=existing.filter(x=>x.status==='available' || x.status==='negotiating').slice(0,keepCount);
+  const used=new Set([...keep.map(x=>x.playerId),...locked]);
+  const replacements=[];
+  for(const item of ranked){
+    if(used.has(item.p.id))continue;
+    replacements.push({playerId:item.p.id,addedWeek:state.week,status:'available'});
+    used.add(item.p.id);
+    if(replacements.length>=Math.max(0,8-keep.length))break;
+  }
+  return [...keep,...replacements].slice(0,8);
+}
+
 export function calculateFinance(state,club,context={}) {
   const week=state.week||1;
   const opponent=context.opponent;
@@ -58,13 +88,9 @@ export function calculateFinance(state,club,context={}) {
   const revenue=matchday+broadcast+sponsorship+commercial+performanceBonus;
   const costs=weeklyWages+operations+debtService+transferInstallment+travel;
   return {
-    revenue:roundMoney(revenue),
-    costs:roundMoney(costs),
-    net:roundMoney(revenue-costs),
+    revenue:roundMoney(revenue),costs:roundMoney(costs),net:roundMoney(revenue-costs),
     breakdown:{matchday,broadcast,sponsorship,commercial,performanceBonus,wages:weeklyWages,operations,debtService,transferInstallment,travel},
-    attendance,
-    ticketPrice:Math.round(ticketPrice*100)/100,
-    home
+    attendance,ticketPrice:Math.round(ticketPrice*100)/100,home
   };
 }
 
@@ -88,7 +114,6 @@ export function advanceWeek(state,world) {
   let result=roll<0.22?'0–1':roll>0.73?'2–0':'1–1';
   if(strengthGap>18&&roll>.52)result='2–1';
   if(strengthGap<-5&&roll<.45)result='0–2';
-
   const home=s.week%2===0;
   const won=['2–0','2–1'].includes(result);
   const lost=['0–1','0–2'].includes(result);
@@ -101,11 +126,9 @@ export function advanceWeek(state,world) {
   s.finance.weeklyWages=finance.breakdown.wages;
   s.finance.lastWeek=finance;
   s.finance.history=[...(s.finance.history||[]),{week:s.week,revenue:finance.revenue,costs:finance.costs,net:finance.net,breakdown:finance.breakdown,home,opponent:opp?.name||'League Opponent',attendance:finance.attendance}].slice(-12);
-  if(s.finance.transferCommitments){
-    s.finance.transferCommitments=Math.max(0,s.finance.transferCommitments-finance.breakdown.transferInstallment);
-  }
-
+  if(s.finance.transferCommitments)s.finance.transferCommitments=Math.max(0,s.finance.transferCommitments-finance.breakdown.transferInstallment);
   s.form=[...(Array.isArray(s.form)?s.form:[]),won?'W':lost?'L':'D'].slice(-5);
+  s.transferMarket=refreshTransferMarket(s,world);
   const reserveTarget=s.finance.reserveTarget||Math.max(5000000,Math.round(s.debt*0.1));
   const wageOverBudget=finance.breakdown.wages>(s.wageBudget||Infinity);
   const cashPressure=s.cash<0?-4:s.cash<reserveTarget?-1:0;
@@ -121,10 +144,7 @@ export function advanceWeek(state,world) {
   s.news.unshift({week:s.week,title:`Matchday: ${result}`,text:`${home?'Home':'Away'} against ${s.lastMatch.opponent}. ${s.lastMatch.headline}. ${home?`${finance.attendance.toLocaleString()} attended. `:''}Financial result: ${finance.net>=0?'+':''}${moneyShort(finance.net)}.`});
   s.news=s.news.slice(0,8);
   if(s.week%4===0){
-    const month=s.finance.history.slice(-4);
-    const revenue=month.reduce((a,x)=>a+x.revenue,0);
-    const costs=month.reduce((a,x)=>a+x.costs,0);
-    const net=revenue-costs;
+    const month=s.finance.history.slice(-4);const revenue=month.reduce((a,x)=>a+x.revenue,0);const costs=month.reduce((a,x)=>a+x.costs,0);const net=revenue-costs;
     s.inbox.unshift({id:Date.now(),type:'FINANCE',title:'Monthly financial review',text:`Revenue ${moneyShort(revenue)}; costs ${moneyShort(costs)}; net ${moneyShort(net)}. Cash ${moneyShort(s.cash)} after the month.`,unread:true});
   }
   return s;
