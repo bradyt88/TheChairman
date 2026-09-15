@@ -47,16 +47,30 @@ Replace placeholder financial controls with the real financial model: revenue, o
 - Wage-budget variance and board-confidence consequences.
 - Transfer allocation versus cash-reserve controls.
 - Indicative club-value calculation tied to cash, debt, reputation and stadium capacity.
+- Transfer activity now feeds squad wages, transfer commitments and financial state.
 - Migration for existing J1/J2 saves so the new finance state is added without discarding the career.
 - Production Financial Control screen using the same responsive Chairman UI system.
 
-**J3 acceptance test:** open Finances → verify Week 1 state → advance one week → verify revenue/cost/net close → verify cash changes → verify history → refresh/load save → verify finance state persists → test reserve/budget controls.
+**J3 acceptance test:** open Finances → verify Week 1 state → advance one week → verify revenue/cost/net close → verify cash changes → verify history → refresh/load save → verify finance state persists → test reserve/budget controls → complete a transfer and verify wages/commitments.
 
 ### J4 — Football Operations
-Build the production squad, staff, manager and football-operations layers around the chairman/manager separation.
+Build the production squad, staff, manager and football-operations layers around the chairman/manager separation. Squad ownership must remain connected to transfer movement and wage costs.
 
 ### J5 — Transfer Room
-Replace the prototype offer buttons with the full negotiation experience: selling club, sporting director/representative, agent, player information, offer structure, counteroffers, walk-away decisions, stakeholder reactions and consequences.
+Build the transfer lifecycle as a simple but consequential chairman system:
+- Eight monitored targets at a time.
+- Market refreshes weekly; normally all eight rotate randomly, while an active negotiation remains visible until completed or abandoned so a player never vanishes mid-decision.
+- Every target shows market value, wage and key player information before negotiation.
+- Offer buttons show the exact proposed fee; there are no hidden “fair” amounts.
+- Low, fair and aggressive offers have different outcomes.
+- Important transfer actions use a two-step flow: proposal → clear confirmation screen → completed transfer.
+- Confirmation shows fee, immediate cash effect, future commitment, wage effect, resulting transfer budget and any wage-budget pressure.
+- Confirmed purchases move the player into the club squad and remove them from the active market.
+- Squad players can be considered for sale through the same chairman confirmation pattern.
+- Confirmed sales remove the player from the squad, increase cash, reduce weekly wages and create new transfer allocation.
+- Transfer spending, income, commitments and wages stay connected to the finance model.
+- The system remains deliberately simpler than a full manager simulator: no tactics or minute-by-minute football decisions are added to the chairman transfer flow.
+- Later iterations can add transfer windows, dates, selling-club negotiation personalities, agents, counteroffers and competing clubs without changing the core lifecycle.
 
 ### J6 — Chairman Experiences
 Build boardroom, stadium visit, training-ground visit, manager meeting, matchday/director's box, media and major-club-moment flows.
