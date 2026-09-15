@@ -1,8 +1,8 @@
 import { loadWorld, generatePlayers } from './data.js';
-import { createCareer } from './state.js';
+import { createCareer, migrateCareer } from './state.js';
 import { saveGame, loadGame } from './storage.js';
 import { advanceWeek } from './simulation.js';
-import { renderShell, renderView, showModal, closeModal, money, esc } from './ui.js';
+import { renderShell, renderView, showModal, closeModal, money, esc } from './ui-production.js';
 
 const root=document.querySelector('#app');
 let world, allPlayers, state, club;
@@ -12,7 +12,7 @@ async function boot(){
     world=await loadWorld();
     allPlayers=generatePlayers(world.clubs);
     const saved=loadGame();
-    if(saved){ club=world.clubs.find(c=>c.id===saved.clubId); state=club?saved:null; }
+    if(saved){ club=world.clubs.find(c=>c.id===saved.clubId); state=club?migrateCareer(saved,club,allPlayers):null; }
     if(state&&club) render(); else renderStart();
   }catch(e){ root.innerHTML=`<div style="padding:40px;color:#fff"><h1>The Chairman</h1><p>${esc(e.message)}</p></div>`; }
 }
@@ -45,6 +45,7 @@ function deal(type,name,value){
   const mult={low:.78,fair:1,aggressive:1.14}[type]; const fee=Math.round(value*mult);
   if(fee>state.transferBudget){ alert('The club cannot fund this offer without breaking the current transfer budget.'); return; }
   state.transferBudget-=fee; state.cash-=Math.round(fee*.35); state.boardConfidence=Math.max(0,Math.min(100,state.boardConfidence+(type==='aggressive'?-2:1)));
+  state.finance.transferCommitments=(state.finance.transferCommitments||0)+fee;
   state.news.unshift({week:state.week,title:`Transfer talks: ${name}`,text:type==='low'?'The selling club rejected the opening position.':`The chairman authorised a ${money(fee)} offer.`});
   closeModal(); render();
 }
@@ -53,17 +54,32 @@ function bind(){
   document.querySelectorAll('[data-menu-view]').forEach(b=>b.onclick=()=>{closeModal();state.activeView=b.dataset.menuView;render();});
   document.querySelectorAll('[data-action]').forEach(b=>b.onclick=()=>action(b.dataset.action,b));
   document.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeModal);
+  document.querySelectorAll('[data-reserve]').forEach(b=>b.onclick=()=>setReserve(Number(b.dataset.reserve)));
+}
+function setReserve(amount){
+  state.finance.reserveTarget=amount;
+  state.boardConfidence=Math.max(0,Math.min(100,state.boardConfidence+(amount>(state.finance.reserveTarget||0)?-1:1)));
+  state.news.unshift({week:state.week,title:'Cash reserve policy updated',text:`The chairman set a minimum cash reserve target of ${money(amount)}.`});
+  render();
 }
 function action(a,b){
   if(a==='careerMenu') return careerMenu();
   if(a==='newCareer'){ closeModal(); return openClubPicker(); }
-  if(a==='continue'){const saved=loadGame(); if(saved){state=saved;club=world.clubs.find(c=>c.id===state.clubId); if(club)render(); else renderStart();}else alert('No saved career found.');return;}
+  if(a==='continue'){const saved=loadGame(); if(saved){state=migrateCareer(saved,world.clubs.find(c=>c.id===saved.clubId),allPlayers);club=world.clubs.find(c=>c.id===state?.clubId); if(club&&state)render(); else renderStart();}else alert('No saved career found.');return;}
   if(a==='exitCareer') return exitCareer();
   if(a==='exitCareerConfirm') return exitCareerConfirm();
   if(a==='advance'){state=advanceWeek(state,world);render();return;}
   if(a==='negotiate') return negotiate(b.dataset.player,Number(b.dataset.value));
-  if(a==='protectCash'){state.cash+=5000000;state.transferBudget=Math.max(0,state.transferBudget-5000000);state.boardConfidence=Math.min(100,state.boardConfidence+2);state.news.unshift({week:state.week,title:'Cash protection plan approved',text:'The board welcomes a more conservative financial position.'});render();return;}
-  if(a==='releaseFunds'){if(state.cash<10000000){alert('The balance sheet is not strong enough.');return;}state.transferBudget+=8000000;state.cash-=8000000;state.fanConfidence=Math.min(100,state.fanConfidence+3);state.boardConfidence=Math.max(0,state.boardConfidence-2);render();return;}
+  if(a==='protectCash'){
+    if(state.transferBudget<5000000)return;
+    state.transferBudget-=5000000;state.cash+=5000000;state.boardConfidence=Math.min(100,state.boardConfidence+2);
+    state.news.unshift({week:state.week,title:'Cash protection plan approved',text:'£5m has been moved from the transfer allocation into cash reserves.'});render();return;
+  }
+  if(a==='releaseFunds'){
+    if(state.cash<5000000)return;
+    state.cash-=5000000;state.transferBudget+=5000000;state.fanConfidence=Math.min(100,state.fanConfidence+2);state.boardConfidence=Math.max(0,state.boardConfidence-2);
+    state.news.unshift({week:state.week,title:'Football budget increased',text:'£5m has been released from cash into the transfer allocation.'});render();return;
+  }
   if(a==='fireManager'){showModal(`<div class="modal-head"><h2>Manager decision</h2><button class="btn" data-close>Cancel</button></div><div class="modal-body"><div class="notice">Removing a manager costs money, damages continuity and creates a new recruitment process. This is intentionally consequential.</div><div class="actions" style="margin-top:18px"><button class="btn btn-primary" data-action="confirmFire">Dismiss ${esc(state.manager.name)}</button><button class="btn" data-close>Keep him</button></div></div>`);bind();return;}
   if(a==='confirmFire'){state.manager={name:'Daniel Costa',reputation:state.reputation-5,contractYears:3};state.managerConfidence=60;state.boardConfidence=Math.max(0,state.boardConfidence-6);state.cash-=3500000;state.news.unshift({week:state.week,title:'Manager dismissed',text:'The chairman has made a decisive change in the dugout.'});closeModal();render();return;}
   if(a==='meeting'){showModal(`<div class="modal-head"><div><div class="eyebrow">Executive meeting</div><h2 style="margin:4px 0 0">The room is waiting.</h2></div><button class="btn" data-close>Leave</button></div><div class="modal-body"><div class="notice">The finance director wants restraint. The sporting director wants recruitment. The manager wants backing. You have to decide what the club can actually afford.</div><div class="actions" style="margin-top:18px"><button class="btn" data-meeting="finance">Back finance</button><button class="btn btn-primary" data-meeting="sporting">Back sporting ambition</button><button class="btn" data-meeting="manager">Back the manager</button></div></div>`);document.querySelectorAll('[data-meeting]').forEach(x=>x.onclick=()=>meeting(x.dataset.meeting));return;}
