@@ -57,15 +57,16 @@ function bind(){
   document.querySelectorAll('[data-reserve]').forEach(b=>b.onclick=()=>setReserve(Number(b.dataset.reserve)));
 }
 function setReserve(amount){
+  const previous=state.finance.reserveTarget||0;
   state.finance.reserveTarget=amount;
-  state.boardConfidence=Math.max(0,Math.min(100,state.boardConfidence+(amount>(state.finance.reserveTarget||0)?-1:1)));
+  state.boardConfidence=Math.max(0,Math.min(100,state.boardConfidence+(amount>previous?-1:amount<previous?1:0)));
   state.news.unshift({week:state.week,title:'Cash reserve policy updated',text:`The chairman set a minimum cash reserve target of ${money(amount)}.`});
   render();
 }
 function action(a,b){
   if(a==='careerMenu') return careerMenu();
   if(a==='newCareer'){ closeModal(); return openClubPicker(); }
-  if(a==='continue'){const saved=loadGame(); if(saved){state=migrateCareer(saved,world.clubs.find(c=>c.id===saved.clubId),allPlayers);club=world.clubs.find(c=>c.id===state?.clubId); if(club&&state)render(); else renderStart();}else alert('No saved career found.');return;}
+  if(a==='continue'){const saved=loadGame(); if(saved){const savedClub=world.clubs.find(c=>c.id===saved.clubId);state=migrateCareer(saved,savedClub,allPlayers);club=savedClub;if(club&&state)render(); else renderStart();}else alert('No saved career found.');return;}
   if(a==='exitCareer') return exitCareer();
   if(a==='exitCareerConfirm') return exitCareerConfirm();
   if(a==='advance'){state=advanceWeek(state,world);render();return;}
