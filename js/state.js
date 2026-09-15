@@ -17,10 +17,18 @@ function seedFinance(club, players) {
   };
 }
 
+function seedTransferMarket(players, clubId) {
+  return players.filter(p=>p.clubId!==clubId).slice(0,8).map(p=>({
+    playerId:p.id,
+    addedWeek:1,
+    status:'available'
+  }));
+}
+
 export function createCareer(club, world, players) {
   const clubPlayers = players.filter(p=>p.clubId===club.id);
   return {
-    version:3,
+    version:4,
     clubId:club.id,
     week:1,
     year:2026,
@@ -40,6 +48,7 @@ export function createCareer(club, world, players) {
     form:[],
     lastMatch:{opponent:'Eastport United',home:true,result:'2–1',headline:'Strong opening result'},
     players:clubPlayers,
+    transferMarket:seedTransferMarket(players,club.id),
     finance:seedFinance(club, clubPlayers),
     activeView:'hq',
     toast:''
@@ -59,5 +68,8 @@ export function migrateCareer(state, club, players) {
   finance.history ??= [];
   finance.reserveTarget ??= Math.max(5000000, Math.round((club.debt || 0) * 0.1));
   finance.transferCommitments ??= 0;
-  return {...state, version:3, players:clubPlayers, finance, form:Array.isArray(state.form)?state.form:[]};
+  const transferMarket = Array.isArray(state.transferMarket) && state.transferMarket.length
+    ? state.transferMarket
+    : seedTransferMarket(players,club.id);
+  return {...state, version:4, players:clubPlayers, finance, transferMarket, form:Array.isArray(state.form)?state.form:[]};
 }
