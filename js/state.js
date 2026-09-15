@@ -5,6 +5,8 @@ function seedFinance(club, players) {
     seasonCosts: 0,
     seasonNet: 0,
     weeklyWages,
+    transferSpend: 0,
+    transferIncome: 0,
     lastWeek: {
       revenue: 0,
       costs: 0,
@@ -25,7 +27,7 @@ function seedTransferMarket(players, clubId) { return players.filter(p=>p.clubId
 export function createCareer(club, world, players) {
   const clubPlayers = players.filter(p=>p.clubId===club.id);
   return {
-    version:4, clubId:club.id, week:1, year:2026,
+    version:5, clubId:club.id, week:1, year:2026,
     cash:club.cash, debt:club.debt, transferBudget:club.transferBudget, wageBudget:club.wageBudget,
     reputation:club.reputation, fanConfidence:club.fanConfidence, boardConfidence:club.boardConfidence, managerConfidence:club.managerConfidence,
     leaguePosition:Math.max(1, Math.min(20, club.tier*3+2)), manager:{name:'Marco Varela', reputation:club.reputation-8, contractYears:2},
@@ -42,9 +44,10 @@ export function migrateCareer(state, club, players) {
   const finance = state.finance || seedFinance(club, clubPlayers);
   finance.seasonRevenue ??= 0; finance.seasonCosts ??= 0; finance.seasonNet ??= finance.seasonRevenue - finance.seasonCosts;
   finance.weeklyWages ??= clubPlayers.reduce((sum,p)=>sum+(Number(p.wage)||0),0);
+  finance.transferSpend ??= 0; finance.transferIncome ??= 0;
   finance.lastWeek ??= {revenue:0,costs:0,net:0,breakdown:{}}; finance.lastWeek.breakdown ??= {};
   finance.history ??= []; finance.reserveTarget ??= Math.max(5000000, Math.round((club.debt || 0) * 0.1)); finance.transferCommitments ??= 0;
   const existing=Array.isArray(state.transferMarket)?state.transferMarket:[];
   const transferMarket=existing.length && existing[0].name ? existing : seedTransferMarket(players,club.id);
-  return {...state, version:4, players:clubPlayers, finance, transferMarket, form:Array.isArray(state.form)?state.form:[]};
+  return {...state, version:5, players:clubPlayers, finance, transferMarket, form:Array.isArray(state.form)?state.form:[]};
 }
