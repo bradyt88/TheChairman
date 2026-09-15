@@ -54,17 +54,31 @@ Replace placeholder financial controls with the real financial model: revenue, o
 **J3 acceptance test:** open Finances → verify Week 1 state → advance one week → verify revenue/cost/net close → verify cash changes → verify history → refresh/load save → verify finance state persists → test reserve/budget controls → complete a transfer and verify wages/commitments.
 
 ### J4 — Football Operations
-Build the production squad, staff, manager and football-operations layers around the chairman/manager separation. Squad ownership must remain connected to transfer movement and wage costs.
+**Status: IN PROGRESS.** J4 is now the active build stage.
+
+Build the production squad, youth pathway, staff, manager and football-operations layers around the chairman/manager separation. Squad ownership must remain connected to transfer movement and wage costs.
 
 **J4 player model requirements:**
 - Keep the player model deliberately chairman-level: no granular Football Manager-style ability attributes such as pace, heading, strength or technical sub-attributes.
-- Use a compact performance record instead: appearances, minutes, goals, assists, key passes, average match rating, form and morale/fitness where useful.
+- Use a compact performance record: appearances, minutes, goals, assists, key passes, average match rating, form, development, fitness and morale.
 - Treat **potential** as a relatively stable ceiling, **development** as progress toward that ceiling, **overall** as current ability and **form** as short-term performance.
-- Overall rating can move gradually with age, development, performance, form and career context; potential should not swing wildly because of one match.
-- Player value should be derived from overall, potential, age, form, contract and market demand rather than being a manually fixed number.
-- Performance statistics should provide the evidence behind changes to form, development, overall and value.
-- The system must remain outcome-based rather than tactical: the chairman sees what players are doing, not a grid of tactical attributes to manage.
-- Player performance must eventually feed transfer interest, wages, squad status and club finances.
+- Overall rating moves gradually from performance, development and age; a single match must not cause wild changes.
+- Player value is derived from overall, potential, age, form, contract and transfer demand.
+- Performance statistics provide evidence behind changes to form, development, overall and value.
+- The system remains outcome-based rather than tactical. No pace, heading, strength, finishing, passing or other granular ability grid is exposed to the chairman.
+- Player performance eventually feeds transfer interest, wages, squad status and club finances.
+
+**J4 squad lifecycle:**
+- **First team:** senior players aged 20+.
+- **Youth squad:** players aged 19 or under.
+- Youth players develop over time and can be promoted into the first team at 20.
+- Strong youth prospects can be used in first-team/cup football; the system should reward meaningful playing time without requiring tactical management.
+- Players age naturally each season.
+- Players approaching their late 30s decline rather than suddenly becoming unusable.
+- Current retirement target is **37**; retirement removes the player from the active squad and records the career milestone.
+- New-generation players enter the youth pathway at roughly **15–17**, with lower starting OVR and potentially high potential.
+- The long-term lifecycle is: **youth → development → first team → performance/value growth → peak → decline → retirement → new generation**.
+- Loans are deliberately deferred to a later stage and are not part of the core J4 mobile loop.
 
 **J4 matchday foundation:**
 - A normal week should still advance the season efficiently, but a league match must no longer be represented only by numbers.
@@ -74,11 +88,11 @@ Build the production squad, staff, manager and football-operations layers around
 - Home matches use a reusable executive/director's-box scene rather than a unique stadium for every club.
 - Away matches use a small set of reusable stadium/travel scenes rather than building 100 bespoke grounds.
 - Matchday should have a short sequence: pre-match → first-half/half-time situation → chairman decision → second-half → full-time → post-match consequence.
-- Chairman decisions should be high-level institutional choices, not tactics, formations or minute-by-minute football management.
+- Chairman decisions are high-level institutional choices, not tactics, formations or minute-by-minute football management.
 - The matchday experience must update the same underlying result, player performance, confidence, finances and news systems used by a skipped match.
 - The user must be able to leave/skip the live experience without corrupting or duplicating the result.
 
-**J4 acceptance test:** open Squad → inspect player performance record → advance a week → choose Skip Match and verify a coherent result/stats/state update → repeat and choose Attend Match → verify the matchday sequence, chairman decision points and final result feed the same finance/confidence/player systems → refresh/load and verify persistence.
+**J4 acceptance test:** open Squad → inspect player performance record → advance a week → choose Skip Match and verify a coherent result/stats/state update → repeat and choose Attend Match → verify the matchday sequence, chairman decision points and final result feed the same finance/confidence/player systems → refresh/load and verify persistence → advance through a season boundary and verify youth promotion, retirement and new-generation creation.
 
 ### J5 — Transfer Room
 Build the transfer lifecycle as a simple but consequential chairman system:
