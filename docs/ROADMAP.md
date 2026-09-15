@@ -56,6 +56,30 @@ Replace placeholder financial controls with the real financial model: revenue, o
 ### J4 — Football Operations
 Build the production squad, staff, manager and football-operations layers around the chairman/manager separation. Squad ownership must remain connected to transfer movement and wage costs.
 
+**J4 player model requirements:**
+- Keep the player model deliberately chairman-level: no granular Football Manager-style ability attributes such as pace, heading, strength or technical sub-attributes.
+- Use a compact performance record instead: appearances, minutes, goals, assists, key passes, average match rating, form and morale/fitness where useful.
+- Treat **potential** as a relatively stable ceiling, **development** as progress toward that ceiling, **overall** as current ability and **form** as short-term performance.
+- Overall rating can move gradually with age, development, performance, form and career context; potential should not swing wildly because of one match.
+- Player value should be derived from overall, potential, age, form, contract and market demand rather than being a manually fixed number.
+- Performance statistics should provide the evidence behind changes to form, development, overall and value.
+- The system must remain outcome-based rather than tactical: the chairman sees what players are doing, not a grid of tactical attributes to manage.
+- Player performance must eventually feed transfer interest, wages, squad status and club finances.
+
+**J4 matchday foundation:**
+- A normal week should still advance the season efficiently, but a league match must no longer be represented only by numbers.
+- `Advance Week` remains the primary calendar action, with a matchday choice before the result is finalised.
+- The player can **Skip Match** for an immediate simulated result.
+- The player can **Attend Match** for a cinematic chairman matchday flow.
+- Home matches use a reusable executive/director's-box scene rather than a unique stadium for every club.
+- Away matches use a small set of reusable stadium/travel scenes rather than building 100 bespoke grounds.
+- Matchday should have a short sequence: pre-match → first-half/half-time situation → chairman decision → second-half → full-time → post-match consequence.
+- Chairman decisions should be high-level institutional choices, not tactics, formations or minute-by-minute football management.
+- The matchday experience must update the same underlying result, player performance, confidence, finances and news systems used by a skipped match.
+- The user must be able to leave/skip the live experience without corrupting or duplicating the result.
+
+**J4 acceptance test:** open Squad → inspect player performance record → advance a week → choose Skip Match and verify a coherent result/stats/state update → repeat and choose Attend Match → verify the matchday sequence, chairman decision points and final result feed the same finance/confidence/player systems → refresh/load and verify persistence.
+
 ### J5 — Transfer Room
 Build the transfer lifecycle as a simple but consequential chairman system:
 - Eight monitored targets at a time.
@@ -75,11 +99,13 @@ Build the transfer lifecycle as a simple but consequential chairman system:
 ### J6 — Chairman Experiences
 Build boardroom, stadium visit, training-ground visit, manager meeting, matchday/director's box, media and major-club-moment flows.
 
+**Matchday note:** the live matchday experience defined in J4 is the football-facing cinematic layer; J6 should turn it into a polished reusable chairman experience with executive presentation, scene transitions and meaningful high-level decisions rather than tactical gameplay.
+
 ### J7 — Competitions & Football World
 Implement league tables, fixtures/results, other-club activity, transfer-market activity, rivalries and competition progression.
 
 ### J8 — Dynamic World & Consequences
-Implement the event/consequence engine, relationships, fan/board/sponsor/media reactions and ownership legacy.
+Implement the event/consequence engine, relationships, fan/board/sponsor/media reactions and ownership legacy. Add living-world player movement so players can move between clubs, other clubs can buy/sell, and the transfer market reflects those changes.
 
 ### J9 — Polish & Release
 Accessibility, performance, mobile QA, save-state integrity, fictional branding audit, onboarding, error handling and GitHub Pages release checks.
