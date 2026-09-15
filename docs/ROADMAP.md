@@ -33,8 +33,24 @@ Implementation is now the active phase. Work in controlled stages and test each 
 ### J2 — Club Overview
 Implement the production Club area: identity, ownership, manager relationship, reputation, expectations, facilities and strategic direction.
 
+**Status: COMPLETE.** Production Club Overview is deployed and uses the locked Chairman visual language.
+
 ### J3 — Business & Finance
 Replace placeholder financial controls with the real financial model: revenue, operating costs, wages, debt servicing, budgets, investment and financial consequences.
+
+**Status: COMPLETE.** J3 now includes:
+- Weekly operating revenue from matchday, broadcast, sponsorship and commercial activity.
+- Weekly costs from actual player wages, club/stadium operations and debt service.
+- Season revenue, costs and net tracking.
+- Twelve-week cash-flow history and monthly financial review messages.
+- Cash reserve target and financial pressure states.
+- Wage-budget variance and board-confidence consequences.
+- Transfer allocation versus cash-reserve controls.
+- Indicative club-value calculation tied to cash, debt, reputation and stadium capacity.
+- Migration for existing J1/J2 saves so the new finance state is added without discarding the career.
+- Production Financial Control screen using the same responsive Chairman UI system.
+
+**J3 acceptance test:** open Finances → verify Week 1 state → advance one week → verify revenue/cost/net close → verify cash changes → verify history → refresh/load save → verify finance state persists → test reserve/budget controls.
 
 ### J4 — Football Operations
 Build the production squad, staff, manager and football-operations layers around the chairman/manager separation.
