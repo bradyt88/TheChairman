@@ -1,6 +1,6 @@
 import { loadWorld, generatePlayers } from './data.js';
 import { loadGame, saveGame } from './storage.js';
-import { advanceWeek, previewMatchday } from './simulation.js';
+import { advanceWeek, previewMatchday } from './simulation.js?matchday=92';
 
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const parseScore=result=>{const m=String(result).match(/(\d+)\s*[–-]\s*(\d+)/);return m?[+m[1],+m[2]]:[0,0];};
