@@ -24,7 +24,7 @@ export function generatePlayers(clubs) {
         overall:ability, potential, value:Math.round((ability*ability*4200 + potential*18000) / 1000)*1000,
         wage:Math.round((ability*ability*1.9 + potential*20)*10)/10,
         morale:65+Math.round(hash(seed+16)*30), form:55+Math.round(hash(seed+20)*40),
-        contractYears:1+Math.floor(hash(seed+24)*5), personality:['Leader','Professional','Ambitious','Loyal','Volatile'][i%5]
+        contractYears:1+Math.floor(hash(seed+24)*5), clubYears:0, personality:['Leader','Professional','Ambitious','Loyal','Volatile'][i%5]
       });
     }
   });
