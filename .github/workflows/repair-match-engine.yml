@@ -1,0 +1,52 @@
+name: Repair match engine
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'js/matchday-fix.js'
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    if: github.actor == 'bradyt88'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch coherent score flow and substitution rules
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          p = Path('js/simulation.js')
+          s = p.read_text()
+
+          old = "Math.min(4,availableSubs.length,1+Math.floor(seededUnit(seed+5)*4))"
+          new = "Math.min(5,availableSubs.length,1+Math.floor(seededUnit(seed+5)*5))"
+          s = s.replace(old, new)
+
+          start = s.index('function matchResult(')
+          end = s.index('function halfTimeFromResult', start)
+          replacement = '''function goalBand(seed){const r=seededUnit(seed);if(r<.30)return 0;if(r<.57)return 1;if(r<.78)return 2;if(r<.91)return 3;if(r<.97)return 4;if(r<.992)return 5;if(r<.998)return 6;return 7;}\nfunction matchResult(state,world,decision='neutral',playerPool=[]){const sWeek=state.week+1,club=world.clubs.find(c=>c.id===state.clubId),opponents=world.clubs.filter(c=>c.leagueId===club?.leagueId&&c.id!==state.clubId),opp=opponents.length?opponents[(sWeek*7)%opponents.length]:null,teamPower=teamStrengthFor(state.players),opponentPlayers=(playerPool||[]).filter(p=>p.clubId===opp?.id),opponentPower=opponentPlayers.length?teamStrengthFor(opponentPlayers):opp?.reputation||50,strengthGap=teamPower-opponentPower,home=sWeek%2===0,homeBonus=home?2.2:0,decisionBias=decision==='support'?0.8:decision==='demand'?1.8:decision==='protect'?-1.2:0,effectiveGap=strengthGap+homeBonus+decisionBias,winProb=clamp(.34+effectiveGap*.009,.14,.62),drawProb=clamp(.27-Math.abs(effectiveGap)*.0015,.18,.29),roll=seededUnit(sWeek*211+state.clubId.length*17);let outcome;if(roll<winProb)outcome='W';else if(roll<winProb+drawProb)outcome='D';else outcome='L';let hg=goalBand(sWeek*223+state.clubId.length*29+(decision.length*7)),ag=goalBand(sWeek*227+state.clubId.length*37+(decision.length*11));const upsetRoll=seededUnit(sWeek*239+state.clubId.length*41);if(upsetRoll<.065){if(outcome==='W')outcome='L';else if(outcome==='L')outcome='W';}if(outcome==='D'){const d=Math.min(hg,ag);hg=d;ag=d;if(seededUnit(sWeek*251+3)<.055){const n=1+Math.floor(seededUnit(sWeek*257+5)*3);hg=n;ag=n;}}else if(outcome==='W'){hg=Math.max(1,hg);if(hg<=ag)hg=ag+1;}else{ag=Math.max(1,ag);if(ag<=hg)ag=hg+1;}if(hg>=6||ag>=6){const total=hg+ag;if(total<7){if(hg>ag)hg=Math.max(5,hg);else ag=Math.max(5,ag);}}return{week:sWeek,home,opponent:opp,result:`${hg}–${ag}`};}\n'''
+          s = s[:start] + replacement + s[end:]
+
+          s = s.replace("preview=matchResult({...s,week:s.week-1},world,decision,playerPool),result=preview.result,home=preview.home,", "preview=matchResult({...s,week:s.week-1},world,decision,playerPool),result=s.pendingMatchdayResult||preview.result,home=preview.home; s.pendingMatchdayResult=null;")
+          p.write_text(s)
+
+          p = Path('js/matchday-fix.js')
+          s = p.read_text()
+          s = s.replace("function finishAttended(state,world,allPlayers,decision,report){const finalPreview=previewMatchday(state,world,decision,allPlayers),finalReport=buildReport(state,world,allPlayers,finalPreview,parseScore(report.halfTime),decision);state.pendingMatchdayDecision=decision;", "function coherentResult(halfTime,result){const [hh,ha]=parseScore(halfTime),[fh,fa]=parseScore(result);return `${Math.max(hh,fh)}–${Math.max(ha,fa)}`;}\nfunction finishAttended(state,world,allPlayers,decision,report){const finalPreview=previewMatchday(state,world,decision,allPlayers),lockedFinal={...finalPreview,result:coherentResult(report.halfTime,finalPreview.result)},finalReport=buildReport(state,world,allPlayers,lockedFinal,parseScore(report.halfTime),decision);state.pendingMatchdayDecision=decision;state.pendingMatchdayResult=finalReport.final;")
+          s = s.replace("next=advanceWeek(state,world,allPlayers);", "next=advanceWeek(state,world,allPlayers);", 1)
+          s = s.replace("function finishSkipped(state,world,allPlayers,preview){const half=halfForFinal(preview.result,preview.week*31),report=buildReport(state,world,allPlayers,preview,half,'neutral'),next=advanceWeek(state,world,allPlayers);", "function finishSkipped(state,world,allPlayers,preview){const half=halfForFinal(preview.result,preview.week*31),report=buildReport(state,world,allPlayers,preview,half,'neutral');state.pendingMatchdayResult=report.final;const next=advanceWeek(state,world,allPlayers);")
+          p.write_text(s)
+      - name: Commit patch
+        shell: bash
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add js/simulation.js js/matchday-fix.js
+          git diff --cached --quiet || git commit -m 'Repair varied match scores and coherent halftime flow'
+          git push
