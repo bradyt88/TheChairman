@@ -1,0 +1,36 @@
+name: Fix matchday runtime declaration
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fix undeclared match result player update
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('js/simulation.js')
+          s=p.read_text()
+          old=';}updatedPlayers=simulateSquadMatch(s,result,power,opponentPower,home),finance='
+          new=';}const updatedPlayers=simulateSquadMatch(s,result,power,opponentPower,home),finance='
+          if old not in s:
+              raise SystemExit('Expected updatedPlayers declaration not found; refusing to patch')
+          p.write_text(s.replace(old,new,1))
+          PY
+          git diff --check
+      - name: Commit patch and remove workflow
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add js/simulation.js
+          git commit -m 'Fix matchday runtime declaration'
+          git push
+          rm .github/workflows/fix-matchday-runtime-92b.yml
+          git add .github/workflows/fix-matchday-runtime-92b.yml
+          git commit -m 'Remove one-shot matchday runtime workflow'
+          git push
