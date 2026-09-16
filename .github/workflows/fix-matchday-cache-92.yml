@@ -1,0 +1,48 @@
+name: Force fresh matchday simulation module
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch and cache-bust matchday runtime
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text()
+          s=s.replace('?v=91','?v=92')
+          p.write_text(s)
+          p=Path('js/matchday-fix.js')
+          s=p.read_text()
+          s=s.replace("from './simulation.js';", "from './simulation.js?matchday=92';")
+          p.write_text(s)
+          p=Path('js/simulation.js')
+          s=p.read_text()
+          old="won=['1–0','2–0','2–1','3–1'].includes(result),lost=['0–1','0–2','1–2'].includes(result),"
+          new="{const [rh,ra]=parseGoals(result);won=home?rh>ra:ra>rh;lost=home?rh<ra:ra<rh;}"
+          if old not in s:
+              raise SystemExit('Expected result classification not found; refusing to patch')
+          s=s.replace(old,new,1)
+          p.write_text(s)
+          PY
+          git diff --check
+      - name: Commit patch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html js/matchday-fix.js js/simulation.js
+          git commit -m 'Force fresh matchday simulation module' || exit 0
+          git push
+      - name: Remove one-shot workflow
+        if: success()
+        run: |
+          rm .github/workflows/fix-matchday-cache-92.yml
+          git add .github/workflows/fix-matchday-cache-92.yml
+          git commit -m 'Remove one-shot matchday cache workflow'
+          git push
