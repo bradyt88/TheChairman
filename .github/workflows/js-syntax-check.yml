@@ -15,11 +15,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Check JavaScript syntax
+      - name: Check JavaScript as browser modules
         shell: bash
         run: |
           set -e
           for file in js/*.js; do
             echo "Checking $file"
-            node --check "$file"
+            node --input-type=module --check < "$file"
           done
