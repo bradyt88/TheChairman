@@ -1,0 +1,30 @@
+name: Debug syntax 94
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Capture syntax errors
+        shell: bash
+        run: |
+          set +e
+          : > syntax.txt
+          for file in js/*.js; do
+            echo "===== $file =====" >> syntax.txt
+            node --input-type=module --check < "$file" >> syntax.txt 2>&1
+            echo "exit=$?" >> syntax.txt
+          done
+          cat syntax.txt
+      - name: Upload syntax report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: syntax-94-report
+          path: syntax.txt
