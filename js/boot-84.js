@@ -9,5 +9,5 @@
   };
   window.addEventListener('error', event => showError(event.error || event.message, 'JavaScript startup error'));
   window.addEventListener('unhandledrejection', event => showError(event.reason, 'Module startup error'));
-  import('./app-84.js?v=87').catch(error => showError(error, 'The Chairman failed to start'));
+  import('./app.js?v=97').catch(error => showError(error, 'The Chairman failed to start'));
 })();
