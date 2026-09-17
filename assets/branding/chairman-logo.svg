@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" role="img" aria-labelledby="title desc">
+<title id="title">The Chairman logo</title>
+<desc id="desc">Gold Chairman emblem with executive chair, football stadium and crown.</desc>
+<defs>
+  <radialGradient id="bg" cx="50%" cy="45%" r="70%"><stop offset="0" stop-color="#182536"/><stop offset="0.65" stop-color="#080b10"/><stop offset="1" stop-color="#020306"/></radialGradient>
+  <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff0a6"/><stop offset="0.22" stop-color="#d9a83f"/><stop offset="0.5" stop-color="#fff0a6"/><stop offset="0.75" stop-color="#b77a18"/><stop offset="1" stop-color="#ffe18a"/></linearGradient>
+  <linearGradient id="pitch" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2f5f45"/><stop offset="1" stop-color="#102b1c"/></linearGradient>
+  <filter id="glow"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<circle cx="500" cy="500" r="472" fill="url(#bg)" stroke="url(#gold)" stroke-width="24"/>
+<circle cx="500" cy="500" r="448" fill="none" stroke="#7b5519" stroke-width="3" opacity=".8"/>
+<!-- stadium -->
+<path d="M95 430 Q500 145 905 430 L905 555 Q500 350 95 555Z" fill="#111821" stroke="#80601f" stroke-width="4"/>
+<path d="M130 430 Q500 205 870 430" fill="none" stroke="#d8ad4d" stroke-width="4" opacity=".7"/>
+<g fill="#ffe28b" filter="url(#glow)">
+  <rect x="145" y="352" width="14" height="70" rx="5"/><rect x="178" y="334" width="14" height="76" rx="5"/><rect x="211" y="319" width="14" height="82" rx="5"/>
+  <rect x="775" y="319" width="14" height="82" rx="5"/><rect x="808" y="334" width="14" height="76" rx="5"/><rect x="841" y="352" width="14" height="70" rx="5"/>
+</g>
+<path d="M125 500 Q500 355 875 500 L875 610 Q500 505 125 610Z" fill="url(#pitch)" stroke="#d0a33e" stroke-width="4"/>
+<path d="M500 410 L500 600 M260 485 Q500 545 740 485 M260 485 Q500 425 740 485" fill="none" stroke="#d9d9c4" stroke-width="3" opacity=".7"/>
+<!-- chairman silhouette and chair -->
+<path d="M310 785 Q305 620 345 515 Q390 455 500 455 Q610 455 655 515 Q695 620 690 785Z" fill="#050608" stroke="#9b7125" stroke-width="6"/>
+<path d="M385 455 Q385 390 500 370 Q615 390 615 455 L595 520 L405 520Z" fill="#111318" stroke="#b6862b" stroke-width="5"/>
+<path d="M410 420 Q500 355 590 420" fill="none" stroke="#3b3d42" stroke-width="18"/>
+<!-- crown -->
+<path d="M435 650 L455 595 L500 630 L545 595 L565 650 L500 675Z" fill="url(#gold)" stroke="#fff0a6" stroke-width="3"/>
+<circle cx="455" cy="592" r="8" fill="#fff0a6"/><circle cx="545" cy="592" r="8" fill="#fff0a6"/>
+<!-- chair arms -->
+<path d="M250 770 Q250 650 315 600 M750 770 Q750 650 685 600" fill="none" stroke="#6e4a16" stroke-width="38" stroke-linecap="round"/>
+<!-- wordmark -->
+<text x="500" y="835" text-anchor="middle" fill="url(#gold)" font-family="Georgia, 'Times New Roman', serif" font-size="72" font-weight="700" letter-spacing="6">THE</text>
+<text x="500" y="910" text-anchor="middle" fill="url(#gold)" font-family="Georgia, 'Times New Roman', serif" font-size="82" font-weight="700" letter-spacing="2">CHAIRMAN</text>
+<path d="M250 935 H440 M560 935 H750" stroke="url(#gold)" stroke-width="5"/>
+<path d="M500 925 l10 10 -10 10 -10 -10z" fill="url(#gold)"/>
+</svg>
