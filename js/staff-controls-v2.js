@@ -39,7 +39,7 @@
   function market(r,old){
     const s=L();if(!s?.staffDatabase)return;
     const clubRep=Number(s.reputation)||60;
-    const a=s.staffDatabase.filter(x=>x.role===r&&x.status==='freeAgent').map(x=>{const rep=Number(x.reputation)||0;return{...x,_fit=Math.abs(rep-clubRep),_score=Math.abs(rep-clubRep)*1.2-(Number(x.decisionMaking)||0)*.35}}).sort((a,b)=>a._score-b._score).slice(0,12);
+    const a=s.staffDatabase.filter(x=>x.role===r&&x.status==='freeAgent').map(x=>{const rep=Number(x.reputation)||0;return{...x,_fit:Math.abs(rep-clubRep),_score:Math.abs(rep-clubRep)*1.2-(Number(x.decisionMaking)||0)*.35}}).sort((a,b)=>a._score-b._score).slice(0,12);
     const m=R[r];
     Q(`<div class="modal-head"><div><div class="eyebrow">Staff market</div><h2>${old?'Choose replacement':'Hire '+m[0]}</h2></div><button type="button" class="btn" data-staff-close>Cancel</button></div><div class="modal-body"><p class="muted">Candidates are selected around your club's competitive level, with decision-making providing a separate measure of judgement.</p><div class="list">${a.map(x=>`<div class="list-row"><div><strong>${E(x.name)}</strong><small>Rep ${Math.round(Number(x.reputation)||0)} · Decision ${Math.round(Number(x.decisionMaking)||0)} · ${M(x.wage)}/wk</small></div>${B(old?'Replace':'Hire','appoint',x.id,`data-staff-role="${r}" data-staff-replacing="${E(old||'')}"`)}</div>`).join('')}</div>${a.length?'':'<div class="notice">No suitable free-agent candidates are currently available.</div>'}</div>`)
   }
