@@ -1,0 +1,9 @@
+/* J2.1 staff controls */
+#staff-modal { position:fixed; inset:0; display:none; place-items:center; padding:20px; background:rgba(0,0,0,.74); backdrop-filter:blur(10px); z-index:1100; overflow:auto; }
+#staff-modal.open { display:grid; }
+#staff-modal .modal-panel { width:min(760px,100%); max-height:90vh; overflow:auto; background:#0c1118; border:1px solid var(--line-strong); border-radius:20px; box-shadow:0 40px 100px rgba(0,0,0,.55); }
+.staff-talk-options { display:grid; gap:10px; margin-top:16px; }
+.staff-talk-option { width:100%; text-align:left; padding:14px 16px; border:1px solid var(--line); border-radius:12px; background:rgba(255,255,255,.025); color:var(--text); cursor:pointer; }
+.staff-talk-option:hover { border-color:rgba(216,175,78,.45); background:rgba(216,175,78,.06); }
+.staff-candidate-meta { display:flex; gap:7px; flex-wrap:wrap; margin-top:6px; }
+@media (max-width:560px) { #staff-modal { padding:10px; } #staff-modal .modal-panel { max-height:94vh; border-radius:16px; } }
