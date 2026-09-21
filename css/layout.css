@@ -25,3 +25,15 @@
 .page-head h1{margin:0;font-size:clamp(28px,3vw,44px);letter-spacing:-.045em;line-height:1.02}
 .page-head p{margin:7px 0 0;color:var(--muted);line-height:1.55;max-width:700px}
 @media(max-width:1100px){.shell{grid-template-columns:82px 1fr}.brand div:not(.brand-mark),.nav button span:last-child,.sidebar-footer{display:none}.brand{justify-content:center;padding-bottom:20px}.nav button{justify-content:center}.content{padding:28px}}
+
+/* Full-game executive framing */
+.main{background:linear-gradient(90deg,rgba(216,175,78,.02),transparent 16%,transparent 84%,rgba(216,175,78,.02)),radial-gradient(circle at 50% 0,rgba(216,175,78,.06),transparent 34%)}
+.topbar{border-bottom-color:rgba(216,175,78,.24);background:linear-gradient(180deg,rgba(9,12,18,.96),rgba(7,9,13,.84))}
+.topbar::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:linear-gradient(90deg,transparent 3%,rgba(216,175,78,.48),transparent 97%);opacity:.7}
+.topbar .btn-primary{min-width:150px;text-transform:uppercase;letter-spacing:.08em;font-size:10px}
+.sidebar{border-right-color:rgba(216,175,78,.22);background:radial-gradient(circle at 50% 0,rgba(216,175,78,.12),transparent 24%),linear-gradient(180deg,#090c12,#05070b 75%)}
+.brand{border-bottom-color:rgba(216,175,78,.22);position:relative}.brand::after{content:"";position:absolute;left:9px;right:9px;bottom:-1px;height:2px;background:linear-gradient(90deg,var(--gold),transparent);opacity:.7}
+.nav{padding-top:4px}.nav button{min-height:46px;border-radius:10px}.nav button span:first-child{transition:transform .2s ease,color .2s ease,filter .2s ease}.nav button:hover span:first-child{transform:scale(1.12);color:var(--gold-soft)}
+.nav button.active{background:linear-gradient(90deg,rgba(216,175,78,.2),rgba(216,175,78,.045)),linear-gradient(180deg,rgba(255,255,255,.025),transparent);border-color:rgba(216,175,78,.3);box-shadow:inset 3px 0 0 var(--gold),0 10px 30px rgba(0,0,0,.28),inset 0 1px 0 rgba(240,213,138,.12)}
+.sidebar-footer{border-top-color:rgba(216,175,78,.2)}
+@media(prefers-reduced-motion:reduce){.nav button span:first-child{transition:none}}
