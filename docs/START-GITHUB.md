@@ -50,9 +50,8 @@ Confirm these work:
 ## Important
 Do not double-click `index.html` for normal testing. The game loads JSON using `fetch()`, so use GitHub Pages or a local web server.
 
-## Image
-The current build intentionally has no replacement hero image. Once the new approved image is chosen, place it at:
+## Approved branding
 
-`assets/chairman-hero.jpg`
+The landing hero uses the approved master artwork at `assets/branding/chairman-logo-master.png`.
 
-The CSS already points to that path.
+Do not substitute the older concept image or add a second hero-artwork source.
