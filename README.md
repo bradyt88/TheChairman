@@ -18,11 +18,8 @@ python -m http.server 8000
 Then open `http://localhost:8000`.
 
 ## Visual assets
-The current build intentionally does **not** use the previously rejected concept image. Put the new approved hero image at:
-
-`assets/chairman-hero.jpg`
-
-The interface will use it automatically as the Chairman HQ hero background.
+- The approved Chairman master artwork is used by the landing hero from `assets/branding/chairman-logo-master.png`.
+- Keep the master artwork as the single source of truth for Chairman branding; do not substitute older concept images.
 
 ## Development stages
 See `docs/ROADMAP.md`.
