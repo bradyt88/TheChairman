@@ -33,20 +33,51 @@ function stadiumView(s,c){
     {id:'west',name:'West Stand',size:'Long side stand',capacity:Math.round(capacity*.34),level:1}
   ];
   const standRows=stands.map(st=>'<button type="button" class="stadium-stand-row" data-stadium-stand="'+st.id+'"><span class="stadium-stand-icon">'+st.id[0].toUpperCase()+'</span><span><strong>'+esc(st.name)+'</strong><small>'+esc(st.size)+' · Level '+st.level+'</small></span><b>'+st.capacity.toLocaleString()+'</b><i>Inspect →</i></button>').join('');
-  return '<div class="stadium-page">'
-NaN
-NaN
-NaN
-NaN
-NaN
-NaN
-NaN
-NaN
-NaN
-NaN
-NaN
-NaN
-NaN
+  return `
+    <div class="stadium-page">
+      <div class="page-head stadium-page-head">
+        <div><div class="eyebrow">Infrastructure · Matchday</div><h1>The Crown Arena</h1><p>Operate the stadium as a football asset: capacity, atmosphere, matchday demand and commercial performance.</p></div>
+        <div class="pill">Capacity ${capacity.toLocaleString()}</div>
+      </div>
+      <section class="stadium-command">
+        <div class="stadium-command-copy">
+          <div class="eyebrow">Stadium environment</div>
+          <h2>Matchday from the Chairman's seat.</h2>
+          <p>Inspect the four stands, rotate the stadium view and monitor the economics around the ground.</p>
+          <div class="stadium-command-stats">
+            <div class="stadium-mini-stat"><span>Attendance</span><strong>${attendance.toLocaleString()}</strong></div>
+            <div class="stadium-mini-stat"><span>Demand</span><strong>${demand.toLocaleString()}</strong></div>
+            <div class="stadium-mini-stat"><span>Fan confidence</span><strong>${Math.round(s.fanConfidence||0)}%</strong></div>
+          </div>
+        </div>
+        <div class="stadium-visual-card">
+          <div class="stadium-visual-toolbar"><span>LIVE MODEL</span><div class="actions"><button class="btn" data-stadium-turn="-1">↶ Rotate</button><button class="btn" data-stadium-turn="1">Rotate ↷</button></div></div>
+          <div class="stadium-model" data-stadium-angle="0">
+            <div class="stadium-sky"></div><div class="stadium-horizon"></div><div class="stadium-floodlight floodlight-a"></div><div class="stadium-floodlight floodlight-b"></div>
+            <div class="stadium-stand stand-north"><span>NORTH</span></div><div class="stadium-stand stand-east"><span>EAST</span></div><div class="stadium-stand stand-south"><span>SOUTH</span></div><div class="stadium-stand stand-west"><span>WEST</span></div>
+            <div class="stadium-pitch"><span class="pitch-halfway"></span><span class="pitch-circle"></span></div>
+            <div class="stadium-model-label">THE CROWN ARENA</div>
+          </div>
+        </div>
+      </section>
+      <div class="grid grid-2 stadium-lower-grid">
+        <section class="card card-pad"><div class="section-title"><h2>Stand management</h2><span>Four sections</span></div><div class="stadium-stand-list">${standRows}</div></section>
+        <section class="card card-pad"><div class="section-title"><h2>Matchday economics</h2><span>Current model</span></div>
+          <div class="list">
+            <div class="list-row"><div><strong>Gate capacity</strong><small>Registered stadium capacity</small></div><strong>${capacity.toLocaleString()}</strong></div>
+            <div class="list-row"><div><strong>Projected attendance</strong><small>Driven by capacity and fan confidence</small></div><strong class="gold">${attendance.toLocaleString()}</strong></div>
+            <div class="list-row"><div><strong>Demand index</strong><small>Indicative demand above expected attendance</small></div><strong>${demand.toLocaleString()}</strong></div>
+            <div class="list-row"><div><strong>Fan confidence</strong><small>Current supporter sentiment</small></div><strong class="gold">${Math.round(s.fanConfidence||0)}%</strong></div>
+          </div>
+        </section>
+      </div>
+      <section class="card card-pad stadium-concessions"><div class="section-title"><h2>Commercial footprint</h2><span>Matchday operations</span></div><div class="grid grid-3">
+        <div class="notice"><strong>Hospitality</strong><br><span class="muted">Executive seating and premium matchday experience.</span></div>
+        <div class="notice"><strong>Concessions</strong><br><span class="muted">Food, beverage and retail activity around the ground.</span></div>
+        <div class="notice"><strong>Atmosphere</strong><br><span class="muted">A full stadium changes the feel of the football operation.</span></div>
+      </div></section>
+    </div>`;
+}
 function staffView(s){return `<div class="page-head"><div><div class="eyebrow">People</div><h1>Staff</h1><p>Build the leadership team around the manager.</p></div></div><div class="grid grid-3">${[['Chief Executive','Eleanor Shaw','Governance & growth'],['Finance Director','Daniel Mercer','Cash flow & debt'],['Sporting Director','Victor Hale','Recruitment & strategy'],['Manager',s.manager.name,'First-team football'],['Head of Academy','Sofia Reed','Youth development'],['Commercial Director','Marcus Vale','Sponsorship & revenue']].map(x=>`<section class="card card-pad"><div class="eyebrow">${x[2]}</div><h3 style="margin:8px 0 4px">${esc(x[1])}</h3><p class="muted">${x[0]}</p></section>`).join('')}</div>`;}
 function inboxView(s){return `<div class="page-head"><div><div class="eyebrow">Executive correspondence</div><h1>Inbox</h1><p>Important messages, reviews and decisions from around the club.</p></div></div><section class="card card-pad"><div class="list">${s.inbox.length?s.inbox.map(n=>`<div class="list-row"><div><span class="pill">${esc(n.type)}</span><strong style="display:block;margin-top:6px">${esc(n.title)}</strong><small>${esc(n.text)}</small></div><span class="pill">${n.unread?'Unread':'Read'}</span></div>`).join(''):`<div class="notice">No new correspondence.</div>`}</div></section>`;}
 export function showModal(html){let m=document.querySelector('#modal');if(!m){m=document.createElement('div');m.id='modal';m.className='modal';document.body.appendChild(m);}m.innerHTML=`<div class="modal-panel">${html}</div>`;m.classList.add('open');}
