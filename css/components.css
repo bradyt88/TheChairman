@@ -148,3 +148,5 @@
 .squad-empty{grid-column:1/-1}.youth-panel,.lifecycle-panel{margin-top:18px}
 @media(max-width:1050px){.squad-player-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:700px){.squad-command{padding:16px}.squad-command-title{align-items:flex-start;flex-direction:column}.squad-player-grid{grid-template-columns:1fr}.player-shirt{width:64px;flex-basis:64px}.player-shirt b{font-size:24px}}
+
+.view-leaving{animation:viewLeave .12s ease forwards!important}@keyframes viewLeave{to{opacity:0;transform:translateY(5px)}}
