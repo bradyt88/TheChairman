@@ -26,7 +26,7 @@ export const FORMATIONS={
   ],
   '5-3-1-2':[
     ['GK','GK'],['RB','DEF'],['CB','DEF'],['CB','DEF'],['CB','DEF'],['LB','DEF'],
-    ['DM','MID'],['CM','MID'],['CM','MID'],['CAM','MID'],['ST','ATT'],['ST','ATT']
+    ['DM','MID'],['CM','MID'],['CM','MID'],['CAM','MID'],['ST','ATT']
   ]
 };
 
