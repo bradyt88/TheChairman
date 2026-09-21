@@ -6,7 +6,7 @@ export async function loadWorld() {
 
 const firstNames = ['Adrian','Milo','Leon','Jasper','Matteo','Luca','Theo','Noah','Elias','Ruben','Oscar','Felix','Nico','Arthur','Jonas','Sami','Kai','Hugo','Evan','Max'];
 const lastNames = ['Vale','Mercer','Santos','Keller','Rossi','Bauer','Navarro','Duarte','Mills','Hart','Vega','Costa','Bennett','Fischer','Moreau','Silva','Reed','Laurent','King','Meyer'];
-const positions = ['GK','RCB','CB','LCB','RB','LB','DM','RCM','CM','LCM','AM','RW','LW','ST'];
+const positions = ['GK','RB','LB','CB','DM','CM','CAM','LM','LW','RM','RW','ST'];
 
 function hash(n) { let x = Math.sin(n * 12.9898) * 43758.5453; return x - Math.floor(x); }
 export function generatePlayers(clubs) {
