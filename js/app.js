@@ -2,7 +2,7 @@ import { loadWorld, generatePlayers } from './data.js';
 import { createCareer, migrateCareer } from './state.js';
 import { saveGame, loadGame } from './storage.js';
 import { advanceWeek, previewMatchday } from './simulation.js';
-import { renderShell, renderView, showModal, closeModal, money, esc } from './ui-production.js';
+import { renderShell, renderView, showModal, closeModal, money, esc } from './ui-production.js?stadiumfix=1';
 import { managerSelection, formationCoordinates } from './manager-selection.js?formation=2';
 
 const root=document.querySelector('#app');
