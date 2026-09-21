@@ -12,7 +12,10 @@
   position:absolute;
   z-index:0;
   pointer-events:none;
-  background:url('../assets/branding/chairman-logo-master.png') center center / contain no-repeat;
+  background-image:url('../assets/branding/chairman-logo-master.png'),url('../assets/branding/chairman-logo.svg');
+  background-position:center,center;
+  background-size:contain,contain;
+  background-repeat:no-repeat,no-repeat;
   border:0;
   border-radius:0;
   box-shadow:none;
