@@ -1,9 +1,12 @@
-THE CHAIRMAN — IMAGE SLOT
+THE CHAIRMAN — APPROVED BRAND ASSET
 
-The current interface deliberately does not include the rejected concept image.
+The approved Chairman master artwork is:
 
-When the new visual is approved, save it in this folder as:
+chairman-logo-master.png
 
-chairman-hero.jpg
+Path:
+assets/branding/chairman-logo-master.png
 
-Recommended: 2400px wide or larger, cinematic stadium / executive football ownership mood, no third-party club logos, no UEFA/Champions League branding.
+This is the single source of truth for the Chairman badge/hero artwork. Do not replace it with the older rejected hero concepts.
+
+Keep the original master artwork intact when making responsive or layout changes; sizing and positioning belong in CSS, not by editing the artwork.
