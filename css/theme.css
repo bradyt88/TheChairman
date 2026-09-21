@@ -37,3 +37,54 @@ a{color:inherit;text-decoration:none}
 .green{color:var(--green)}
 .red{color:var(--red)}
 .muted{color:var(--muted)}
+
+
+/* CHAIRMAN SCROLLBAR SYSTEM */
+html{
+  scrollbar-width:thin;
+  scrollbar-color:#9f7521 #080b10;
+}
+*{
+  scrollbar-width:thin;
+  scrollbar-color:#9f7521 #080b10;
+}
+*::-webkit-scrollbar{
+  width:10px;
+  height:10px;
+}
+*::-webkit-scrollbar-track{
+  background:#080b10;
+}
+*::-webkit-scrollbar-thumb{
+  background:linear-gradient(180deg,#f0d58a 0%,#d8af4e 45%,#8f681d 100%);
+  border:2px solid #080b10;
+  border-radius:999px;
+}
+*::-webkit-scrollbar-thumb:hover{
+  background:linear-gradient(180deg,#ffe7a7 0%,#e4bd5c 48%,#a97824 100%);
+}
+*::-webkit-scrollbar-corner{
+  background:#080b10;
+}
+
+/* MATCHDAY LAYER — ALWAYS ABOVE THE GAME SHELL */
+#prematch-gate,
+#matchday-fix-overlay{
+  position:fixed!important;
+  inset:0!important;
+  z-index:2147483000!important;
+  isolation:isolate;
+}
+#prematch-gate .prematch-backdrop{
+  z-index:1!important;
+}
+#prematch-gate .prematch-panel{
+  position:relative;
+  z-index:2!important;
+}
+#matchday-fix-overlay > div{
+  z-index:1!important;
+}
+body.matchday-open{
+  overflow:hidden;
+}
