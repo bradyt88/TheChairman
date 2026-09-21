@@ -1,26 +1,39 @@
 :root {
-  --bg: #07090d;
-  --bg-2: #0b0f16;
-  --panel: rgba(16, 21, 30, .92);
-  --panel-2: rgba(21, 27, 38, .95);
-  --line: rgba(255,255,255,.09);
-  --line-strong: rgba(216, 175, 78, .28);
-  --text: #f4f1e8;
-  --muted: #8f98a7;
-  --gold: #d8af4e;
-  --gold-soft: #f0d58a;
-  --green: #52c58c;
-  --red: #ef7373;
-  --blue: #75a8ff;
-  --shadow: 0 20px 60px rgba(0,0,0,.35);
-  --radius: 18px;
-  --radius-sm: 12px;
-  --font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --bg:#06080c;
+  --bg-2:#0a0e14;
+  --panel:rgba(15,20,29,.94);
+  --panel-2:rgba(21,28,39,.96);
+  --panel-3:rgba(255,255,255,.035);
+  --line:rgba(255,255,255,.085);
+  --line-strong:rgba(216,175,78,.34);
+  --line-bright:rgba(240,213,138,.58);
+  --text:#f6f3eb;
+  --muted:#929baa;
+  --gold:#d8af4e;
+  --gold-soft:#f0d58a;
+  --green:#52c58c;
+  --red:#ef7373;
+  --blue:#75a8ff;
+  --shadow:0 24px 70px rgba(0,0,0,.42);
+  --shadow-soft:0 12px 34px rgba(0,0,0,.26);
+  --radius:18px;
+  --radius-sm:12px;
+  --font:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 }
-* { box-sizing: border-box; }
-html, body { margin: 0; min-height: 100%; background: var(--bg); color: var(--text); font-family: var(--font); }
-body { background-image: radial-gradient(circle at 80% 0%, rgba(216,175,78,.07), transparent 30%), linear-gradient(180deg, #07090d, #090c12 55%, #06080b); }
-button, input, select { font: inherit; }
-button { cursor: pointer; }
-a { color: inherit; text-decoration: none; }
-::selection { background: rgba(216,175,78,.25); }
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:var(--font)}
+body{
+  background:
+    radial-gradient(circle at 82% -8%,rgba(216,175,78,.095),transparent 28%),
+    radial-gradient(circle at 10% 28%,rgba(117,168,255,.035),transparent 25%),
+    linear-gradient(180deg,#06080c 0%,#090d13 52%,#05070a 100%);
+}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.22;background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.012) 1px,transparent 1px);background-size:56px 56px;mask-image:linear-gradient(to bottom,black,transparent 80%);z-index:-1}
+button,input,select{font:inherit}
+button{cursor:pointer}
+a{color:inherit;text-decoration:none}
+::selection{background:rgba(216,175,78,.25)}
+.gold{color:var(--gold-soft)}
+.green{color:var(--green)}
+.red{color:var(--red)}
+.muted{color:var(--muted)}
