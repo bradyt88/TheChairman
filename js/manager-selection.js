@@ -35,6 +35,21 @@ const formationForManager=manager=>{
   return FORMATIONS[preferred]?preferred:'4-4-2';
 };
 
+const FORMATION_COORDINATES={
+  '4-4-2':[[50,88],[86,68],[62,68],[38,68],[14,68],[86,45],[62,47],[38,47],[14,45],[62,17],[38,17]],
+  '4-3-3 DM':[[50,88],[86,68],[62,68],[38,68],[14,68],[50,53],[34,43],[66,43],[14,20],[50,14],[86,20]],
+  '4-5-1 flat':[[50,88],[86,68],[62,68],[38,68],[14,68],[10,45],[32,43],[50,40],[68,43],[90,45],[50,16]],
+  '4-1-4-1':[[50,88],[86,68],[62,68],[38,68],[14,68],[50,55],[12,41],[36,40],[64,40],[88,41],[50,15]],
+  '4-4-1-1':[[50,88],[86,68],[62,68],[38,68],[14,68],[86,46],[62,46],[38,46],[14,46],[50,29],[50,14]],
+  '5-3-1-2':[[50,88],[88,69],[69,69],[50,72],[31,69],[12,69],[50,53],[31,44],[69,44],[50,28],[50,14]]
+};
+
+export function formationCoordinates(state){
+  const {name,slots}=formationSlots(state);
+  const coords=FORMATION_COORDINATES[name]||FORMATION_COORDINATES['4-4-2'];
+  return {name,slots:slots.map((slot,index)=>({...slot,x:coords[index]?.[0]||50,y:coords[index]?.[1]||50}))};
+}
+
 export function managerFormation(state){
   return formationForManager(state?.manager);
 }
