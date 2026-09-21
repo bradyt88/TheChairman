@@ -4,3 +4,29 @@
 
 /* Major-overhaul responsive behaviour */
 @media(max-width:560px){.nav button{min-height:54px;border-radius:11px}.nav button:active{transform:scale(.92)}.nav button span:first-child{width:30px;height:30px;font-size:15px}.squad-command-title h2{font-size:20px}.squad-page::before{display:none}.squad-player-card{min-height:172px}.player-card-main{padding:12px}.page-head h1{font-size:34px}}
+
+
+/* EXECUTIVE MOBILE POLISH */
+@media(max-width:760px){
+  .grid-4{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grid-3{grid-template-columns:1fr}
+  .page-head{align-items:flex-start}
+  .page-head h1{font-size:38px}
+  .page-head p{font-size:12px}
+}
+@media(max-width:560px){
+  .shell{grid-template-columns:1fr}
+  .sidebar{position:fixed;top:auto;bottom:0;left:0;right:0;width:100%;height:70px;padding:7px 8px;background:rgba(6,8,12,.97);border-right:0;border-top:1px solid rgba(216,175,78,.28);box-shadow:0 -18px 45px rgba(0,0,0,.38);z-index:100}
+  .brand,.sidebar-footer{display:none}
+  .nav{height:100%;display:grid;grid-template-columns:repeat(9,1fr);gap:4px;overflow:hidden;padding:0}
+  .nav button{min-height:56px;padding:4px 2px;justify-content:center;display:grid;gap:2px;border-radius:9px}
+  .nav button span:first-child{width:30px;height:30px;margin:auto;font-size:14px}
+  .nav button span:last-child{font-size:7px;line-height:1}
+  .nav button.active{transform:none;box-shadow:inset 0 2px 0 var(--gold),0 0 20px rgba(216,175,78,.08)}
+  .main{padding-bottom:76px}
+  .main::before{left:0;inset-bottom:70px}
+  .topbar .actions{gap:5px}
+  .topbar .actions .pill{display:none}
+  .topbar .btn-primary{min-width:0;padding:9px 11px;font-size:9px}
+  .menu-button{display:none}
+}
