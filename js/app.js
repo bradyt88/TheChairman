@@ -3,6 +3,7 @@ import { createCareer, migrateCareer } from './state.js';
 import { saveGame, loadGame } from './storage.js';
 import { advanceWeek, previewMatchday } from './simulation.js';
 import { renderShell, renderView, showModal, closeModal, money, esc } from './ui-production.js';
+import { managerSelection } from './manager-selection.js';
 
 const root=document.querySelector('#app');
 let world, allPlayers, state, club;
