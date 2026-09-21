@@ -163,3 +163,30 @@
 .formation-footer{display:flex;justify-content:space-between;margin-top:12px;color:#929baa;font-size:9px;letter-spacing:.1em;text-transform:uppercase}.match-subs{padding:18px}.sub-grid{display:grid;grid-template-columns:repeat(7,minmax(70px,1fr));gap:8px}.matchday-actions{justify-content:flex-end}
 @media(max-width:760px){.football-pitch{min-height:500px}.formation-player{width:68px}.formation-player strong{font-size:8px;max-width:68px}.formation-shirt{width:38px;height:35px}.sub-grid{grid-template-columns:repeat(2,1fr)}.formation-head{align-items:flex-start;flex-direction:column}}
 @media(max-width:430px){.football-pitch{min-height:430px}.formation-row{gap:2px}.formation-player{width:58px}.formation-player strong{max-width:58px;font-size:7px}.formation-shirt{width:32px;height:30px}.formation-shirt b{font-size:11px}}
+
+/* MATCHDAY TACTICAL BOARD */
+.pre-match-formation{padding:18px}
+.formation-pitch-players{position:absolute;inset:0;z-index:3}
+.formation-pitch-players .formation-player{position:absolute;left:var(--px);top:var(--py);transform:translate(-50%,-50%);transition:transform .24s ease,filter .24s ease}
+.formation-pitch-players .formation-player:hover{transform:translate(-50%,-56%) scale(1.06);filter:drop-shadow(0 8px 12px rgba(0,0,0,.4))}
+.formation-empty{opacity:.35;pointer-events:none}
+.pre-match-sub-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+.formation-bench-player{display:flex;align-items:center;gap:8px;min-width:0;padding:9px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.025);color:inherit;text-align:left;cursor:pointer;transition:transform .22s ease,border-color .22s ease,background .22s ease}
+.formation-bench-player:hover{transform:translateY(-3px);border-color:rgba(216,175,78,.42);background:rgba(216,175,78,.06)}
+.formation-bench-player .formation-shirt{width:30px;height:28px;flex:0 0 30px}.formation-bench-player .formation-shirt b{font-size:9px}
+.formation-bench-player strong,.formation-bench-player small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.formation-bench-player strong{font-size:9px}.formation-bench-player small{font-size:7px;color:var(--muted);margin-top:2px}
+#prematch-gate{animation:prematchFadeIn .26s ease both}
+.prematch-backdrop{position:fixed;inset:0;background:rgba(3,6,10,.9);backdrop-filter:blur(9px);z-index:99998;display:grid;place-items:center;padding:18px}
+.prematch-panel{width:min(1080px,100%);max-height:94vh;overflow:auto;background:linear-gradient(145deg,#151b25,#0b0f15);border:1px solid rgba(214,178,82,.32);border-radius:18px;box-shadow:0 30px 100px rgba(0,0,0,.65),0 0 70px rgba(216,175,78,.08);color:#f4f5f7;padding:22px;animation:prematchPanelIn .3s cubic-bezier(.2,.75,.25,1) both}
+.prematch-top{display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:end;padding-bottom:16px;border-bottom:1px solid rgba(216,175,78,.18)}
+.prematch-top h2{margin:5px 0 0;font-size:30px}.prematch-fixture{display:flex;justify-content:flex-end;align-items:center;gap:14px;font-size:15px}.prematch-fixture span{color:var(--gold-soft);font-weight:900;letter-spacing:.1em}
+.prematch-manager-note{display:grid;gap:4px;margin:16px 0;padding:13px 15px;border:1px solid rgba(216,175,78,.18);border-radius:11px;background:rgba(216,175,78,.06)}
+.prematch-manager-note strong{font-size:11px}.prematch-manager-note span{font-size:10px;color:var(--muted);line-height:1.5}
+.prematch-start{width:100%;margin-top:16px;min-height:50px;font-weight:900}
+@keyframes prematchFadeIn{from{opacity:0}to{opacity:1}}
+@keyframes prematchPanelIn{from{opacity:0;transform:translateY(16px) scale(.985)}to{opacity:1;transform:none}}
+#modal .modal-panel{animation:modalPanelIn .28s cubic-bezier(.2,.75,.25,1) both}
+@keyframes modalPanelIn{from{opacity:0;transform:translateY(12px) scale(.985)}to{opacity:1;transform:none}}
+@media(max-width:760px){.pre-match-sub-grid{grid-template-columns:1fr 1fr}.prematch-top{grid-template-columns:1fr;gap:8px}.prematch-fixture{justify-content:flex-start;font-size:13px}.prematch-panel{padding:15px}.pre-match-formation{padding:12px}}
+@media(max-width:560px){.football-pitch{min-height:430px}.formation-pitch-players .formation-player{width:58px}.prematch-panel{max-height:96vh;border-radius:14px}.prematch-fixture{font-size:11px}.prematch-manager-note{margin:11px 0}.pre-match-sub-grid{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){#prematch-gate,.prematch-panel,#modal .modal-panel{animation:none}.formation-pitch-players .formation-player,.formation-bench-player{transition:none}}
