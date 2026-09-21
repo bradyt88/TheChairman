@@ -70,3 +70,16 @@
   .hero .actions { display:grid; gap:10px; }
   .hero .actions .btn { width:100%; }
 }
+
+
+.brand-mark{
+  background:url('../assets/branding/chairman-logo-master.png') center/contain no-repeat;
+  border:0;
+  border-radius:10px;
+  box-shadow:none;
+  color:transparent;
+  flex:0 0 46px;
+  width:46px;
+  height:46px;
+  min-width:46px;
+}
