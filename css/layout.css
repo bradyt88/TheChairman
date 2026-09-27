@@ -107,6 +107,25 @@ body{background:#04060a}
 }
 
 
+
+
+/* PAGE-SPECIFIC VISUAL ENVIRONMENTS */
+.main{position:relative;isolation:isolate;overflow:hidden}
+.main::after{content:"";position:fixed;top:0;right:0;bottom:0;left:258px;pointer-events:none;z-index:-1;background-position:center;background-size:cover;background-repeat:no-repeat;filter:saturate(.9) contrast(1.04);transform:translateZ(0);opacity:.9}
+.main::before{z-index:0}
+.main-hq::after{background-image:linear-gradient(90deg,rgba(3,5,8,.88) 0%,rgba(3,5,8,.5) 32%,rgba(3,5,8,.28) 72%,rgba(3,5,8,.48) 100%),linear-gradient(180deg,rgba(3,5,8,.2),rgba(3,5,8,.62)),url("../assets/backgrounds/chairman-hq/chairman-hq-background.png")}
+.main-club::after{background-image:linear-gradient(90deg,rgba(3,5,8,.88) 0%,rgba(3,5,8,.5) 32%,rgba(3,5,8,.28) 72%,rgba(3,5,8,.48) 100%),linear-gradient(180deg,rgba(3,5,8,.2),rgba(3,5,8,.62)),url("../assets/backgrounds/club-charter/club-background.png")}
+.main-board::after{background-image:linear-gradient(90deg,rgba(3,5,8,.88) 0%,rgba(3,5,8,.48) 32%,rgba(3,5,8,.24) 72%,rgba(3,5,8,.48) 100%),linear-gradient(180deg,rgba(3,5,8,.18),rgba(3,5,8,.62)),url("../assets/backgrounds/boardroom/boardroom-background.png")}
+.main-finance::after{background-image:linear-gradient(90deg,rgba(3,5,8,.88) 0%,rgba(3,5,8,.5) 32%,rgba(3,5,8,.26) 72%,rgba(3,5,8,.48) 100%),linear-gradient(180deg,rgba(3,5,8,.2),rgba(3,5,8,.62)),url("../assets/backgrounds/finances/finances-background.png")}
+.main-transfers::after{background-image:linear-gradient(90deg,rgba(3,5,8,.88) 0%,rgba(3,5,8,.5) 32%,rgba(3,5,8,.26) 72%,rgba(3,5,8,.48) 100%),linear-gradient(180deg,rgba(3,5,8,.2),rgba(3,5,8,.62)),url("../assets/backgrounds/transfers/transfers-background.png")}
+.main-squad::after{background-image:linear-gradient(90deg,rgba(3,5,8,.88) 0%,rgba(3,5,8,.5) 32%,rgba(3,5,8,.26) 72%,rgba(3,5,8,.48) 100%),linear-gradient(180deg,rgba(3,5,8,.2),rgba(3,5,8,.62)),url("../assets/backgrounds/squad/squad-background.png")}
+.main-facilities::after{background-image:linear-gradient(90deg,rgba(3,5,8,.86) 0%,rgba(3,5,8,.48) 28%,rgba(3,5,8,.24) 68%,rgba(3,5,8,.42) 100%),linear-gradient(180deg,rgba(3,5,8,.18),rgba(3,5,8,.68)),url("../assets/stadium/crown-arena-background.png")}
+.main-staff::after{background-image:linear-gradient(90deg,rgba(3,5,8,.88) 0%,rgba(3,5,8,.5) 32%,rgba(3,5,8,.26) 72%,rgba(3,5,8,.48) 100%),linear-gradient(180deg,rgba(3,5,8,.2),rgba(3,5,8,.62)),url("../assets/backgrounds/staff/staff-background.png")}
+.main-inbox::after{background-image:linear-gradient(90deg,rgba(3,5,8,.88) 0%,rgba(3,5,8,.5) 32%,rgba(3,5,8,.26) 72%,rgba(3,5,8,.48) 100%),linear-gradient(180deg,rgba(3,5,8,.2),rgba(3,5,8,.62)),url("../assets/backgrounds/inbox/inbox-background.png")}
+.main-hq .content,.main-club .content,.main-board .content,.main-finance .content,.main-transfers .content,.main-squad .content,.main-facilities .content,.main-staff .content,.main-inbox .content{background:linear-gradient(180deg,rgba(4,6,10,.04),rgba(4,6,10,.14))}
+@media(max-width:1100px){.main::after{left:82px}}
+@media(max-width:560px){.main::after{left:0}}
+
 /* FACILITIES FOUNDATION */
 .facilities-page{position:relative;z-index:2}
 .facilities-page-head{position:relative;z-index:2}
