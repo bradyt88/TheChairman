@@ -73,7 +73,7 @@ body{background:#04060a}
 
 /* STADIUM MASTER BACKDROP — FIXED BEHIND THE UI */
 .main{isolation:isolate}
-.main:has(.stadium-page)::after{
+.main:has(.facilities-page)::after{
   content:"";
   position:fixed;
   top:0;
@@ -89,19 +89,38 @@ body{background:#04060a}
   filter:saturate(.88) contrast(1.04);
   transform:translateZ(0);
 }
-.main:has(.stadium-page) .content{
+.main:has(.facilities-page) .content{
   background:linear-gradient(180deg,rgba(4,6,10,.08),rgba(4,6,10,.16));
 }
-.main:has(.stadium-page) .stadium-page-head,
-.main:has(.stadium-page) .stadium-command,
-.main:has(.stadium-page) .stadium-lower-grid,
-.main:has(.stadium-page) .stadium-concessions{
+.main:has(.facilities-page) .stadium-page-head,
+.main:has(.facilities-page) .stadium-command,
+.main:has(.facilities-page) .stadium-lower-grid,
+.main:has(.facilities-page) .stadium-concessions{
   position:relative;
   z-index:2;
 }
 @media(max-width:1100px){
-  .main:has(.stadium-page)::after{left:82px}
+  .main:has(.facilities-page)::after{left:82px}
 }
 @media(max-width:560px){
-  .main:has(.stadium-page)::after{left:0}
+  .main:has(.facilities-page)::after{left:0}
 }
+
+
+/* FACILITIES FOUNDATION */
+.facilities-page{position:relative;z-index:2}
+.facilities-page-head{position:relative;z-index:2}
+.facilities-hero{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(320px,.65fr);gap:24px;align-items:stretch;margin-bottom:20px;padding:30px;border:1px solid rgba(216,175,78,.28);border-radius:20px;background:linear-gradient(135deg,rgba(12,16,23,.92),rgba(5,8,13,.78)),radial-gradient(circle at 90% 0,rgba(216,175,78,.16),transparent 38%);box-shadow:0 24px 70px rgba(0,0,0,.42),inset 0 1px 0 rgba(240,213,138,.1)}
+.facilities-hero h2{margin:7px 0 8px;font-size:clamp(28px,4vw,46px);letter-spacing:-.045em;max-width:760px}
+.facilities-hero p{margin:0;color:#aeb5c0;line-height:1.65;max-width:760px}
+.facilities-hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;align-self:stretch}
+.facilities-hero-stats>div{display:flex;flex-direction:column;justify-content:center;padding:16px;border:1px solid rgba(216,175,78,.16);border-radius:14px;background:rgba(216,175,78,.045);text-align:center}
+.facilities-hero-stats span,.facilities-hero-stats small{color:#8f98a6;font-size:9px;text-transform:uppercase;letter-spacing:.12em}.facilities-hero-stats strong{margin:8px 0;font-size:25px;color:#fff}
+.facilities-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+.facility-card{display:flex;min-height:270px;flex-direction:column;text-align:left;color:inherit;cursor:pointer;padding:22px!important;transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease}
+.facility-card:hover{transform:translateY(-7px);border-color:rgba(240,213,138,.5)!important;box-shadow:0 28px 65px rgba(0,0,0,.48),0 0 36px rgba(216,175,78,.1)}
+.facility-card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px}.facility-icon{width:54px;height:54px;display:grid;place-items:center;border:1px solid rgba(216,175,78,.3);border-radius:15px;background:linear-gradient(145deg,rgba(216,175,78,.16),rgba(216,175,78,.035));color:var(--gold-soft);font-size:22px;box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
+.facility-card h2{margin:7px 0 8px;font-size:21px}.facility-card p{margin:0;color:#8f98a6;font-size:11px;line-height:1.6;min-height:54px}.facility-card-meta{display:flex;flex-direction:column;gap:5px;margin-top:auto;padding-top:18px;border-top:1px solid rgba(216,175,78,.14)}.facility-card-meta strong{color:#fff;font-size:14px}.facility-card-meta span{color:#8f98a6;font-size:9px;text-transform:uppercase;letter-spacing:.1em}
+.facilities-note{margin-top:18px}
+@media(max-width:1100px){.facilities-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.facilities-hero{grid-template-columns:1fr}.facilities-hero-stats{min-height:120px}}
+@media(max-width:560px){.facilities-grid{grid-template-columns:1fr}.facilities-hero{padding:20px}.facilities-hero-stats{grid-template-columns:1fr}.facility-card{min-height:240px}}
