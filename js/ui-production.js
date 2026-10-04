@@ -1,4 +1,5 @@
 import { estimatedClubValue, getOperationalStadiumCapacity } from './simulation.js';
+import { facilityUpgradeCost, facilityMaintenanceCost, facilityEffect, FACILITY_SPECS } from './state.js';
 
 const money=n=>`£${Math.round(n||0).toLocaleString('en-GB')}`;
 const shortMoney=n=>{const v=Math.abs(n||0),sign=(n||0)<0?'-':'';return v>=1000000?`${sign}£${(v/1000000).toFixed(1)}m`:v>=1000?`${sign}£${Math.round(v/1000)}k`:`${sign}£${Math.round(v)}`;};
@@ -28,50 +29,34 @@ function facilitiesView(s,c){
   const capacity=getOperationalStadiumCapacity(s,c);
   const condition=Math.max(0,Math.min(100,Number(stadium.condition??100)));
   const level=Number(stadium.level||1);
-  const cards=[
-    facilityCard('stadium','▣','Stadium',stadium.name||'The Crown Arena',`Capacity ${capacity.toLocaleString()} · Level ${level} · Condition ${condition}%`, 'Stadium infrastructure, pitch and matchday operations.'),
-    facilityCard('training','◆','Training Facilities',`Level ${Number(f.training?.level||1)}`,`Condition ${Math.max(0,Math.min(100,Number(f.training?.condition??100)))}%`, 'Training environment and football development infrastructure.'),
-    facilityCard('youth','◇','Youth Facilities',`Level ${Number(f.youth?.level||1)}`,`Condition ${Math.max(0,Math.min(100,Number(f.youth?.condition??100)))}%`, 'Academy infrastructure and long-term player development.'),
-    facilityCard('medical','✚','Medical Facilities',`Level ${Number(f.medical?.level||1)}`,`Condition ${Math.max(0,Math.min(100,Number(f.medical?.condition??100)))}%`, 'Medical and recovery infrastructure supporting the squad.')
-  ].join('');
+  const facilityData=[
+    ['stadium','▣','Stadium',stadium.name||'The Crown Arena',`Capacity ${capacity.toLocaleString()} · Level ${level}`,condition,'Stadium infrastructure, pitch and matchday operations.'],
+    ['training','◆','Training Facilities',`Level ${Number(f.training?.level||1)}`,`Condition ${Math.round(Number(f.training?.condition??100))}%`,Number(f.training?.condition??100),'Training environment, player development and fitness.'],
+    ['youth','◇','Youth Facilities',`Level ${Number(f.youth?.level||1)}`,`Condition ${Math.round(Number(f.youth?.condition??100))}%`,Number(f.youth?.condition??100),'Academy infrastructure and long-term player development.'],
+    ['medical','✚','Medical Facilities',`Level ${Number(f.medical?.level||1)}`,`Condition ${Math.round(Number(f.medical?.condition??100))}%`,Number(f.medical?.condition??100),'Recovery and medical infrastructure supporting the squad.']
+  ];
+  const cards=facilityData.map(([key,icon,title,value,meta,cond,description])=>facilityCard(key,icon,title,value,meta,description,facilityEffect(key,s))).join('');
   return `
     <div class="facilities-page">
       <div class="page-head facilities-page-head">
-        <div>
-          <div class="eyebrow">Infrastructure · Facilities</div>
-          <h1>Facilities</h1>
-          <p>Manage the physical assets that support the club. The Chairman sees the whole institution, not just the first team.</p>
-        </div>
+        <div><div class="eyebrow">Infrastructure · Facilities</div><h1>Facilities</h1><p>Manage the physical assets that support the club. Every investment changes the institution around the football.</p></div>
         <div class="pill">4 Core Facilities</div>
       </div>
       <section class="facilities-hero">
-        <div>
-          <div class="eyebrow">THE CLUB'S INFRASTRUCTURE</div>
-          <h2>Build the institution behind the football.</h2>
-          <p>Each facility has its own condition and level. Detailed upgrades, maintenance and operational decisions will be introduced in later stages.</p>
-        </div>
-        <div class="facilities-hero-stats">
-          <div><span>Stadium</span><strong>${capacity.toLocaleString()}</strong><small>Seats</small></div>
-          <div><span>Stadium Level</span><strong>${level}</strong><small>Current level</small></div>
-          <div><span>Condition</span><strong>${condition}%</strong><small>Current state</small></div>
-        </div>
+        <div><div class="eyebrow">THE CLUB'S INFRASTRUCTURE</div><h2>Build the institution behind the football.</h2><p>Level determines capability. Condition determines how effectively the asset performs. Maintenance protects the investment; upgrades cost real money.</p></div>
+        <div class="facilities-hero-stats"><div><span>Stadium</span><strong>${capacity.toLocaleString()}</strong><small>Seats</small></div><div><span>Stadium Level</span><strong>${level}</strong><small>Current level</small></div><div><span>Condition</span><strong>${Math.round(condition)}%</strong><small>Current state</small></div></div>
       </section>
-      <section class="facilities-grid">
-        ${cards}
-      </section>
-      <section class="card card-pad facilities-note">
-        <div class="section-title"><h2>Facilities architecture</h2><span>Foundation stage</span></div>
-        <div class="notice">This hub is the foundation for the club's infrastructure system. No upgrades, maintenance payments, security controls or concession pricing are active yet.</div>
-      </section>
+      <section class="facilities-grid">${cards}</section>
+      <section class="card card-pad facilities-note"><div class="section-title"><h2>How the system works</h2><span>Live infrastructure</span></div><div class="grid grid-3"><div class="notice"><strong>Upgrade</strong><br>Raises capability and changes what the facility can deliver.</div><div class="notice"><strong>Maintenance</strong><br>Restores condition for a direct cash cost.</div><div class="notice"><strong>Neglect</strong><br>Condition naturally falls over time and effectiveness follows it.</div></div></section>
     </div>`;
 }
-function facilityCard(key,icon,title,value,meta,description){
+function facilityCard(key,icon,title,value,meta,description,effect){
+  const percent=Math.round(Math.max(.65,Math.min(1.3,effect))*100);
   return `<button type="button" class="facility-card card" data-action="openFacility" data-facility="${key}">
-    <div class="facility-card-top"><span class="facility-icon">${icon}</span><span class="pill">Open →</span></div>
-    <div class="eyebrow">FACILITY</div>
-    <h2>${esc(title)}</h2>
-    <p>${esc(description)}</p>
+    <div class="facility-card-top"><span class="facility-icon">${icon}</span><span class="pill">Manage →</span></div>
+    <div class="eyebrow">FACILITY</div><h2>${esc(title)}</h2><p>${esc(description)}</p>
     <div class="facility-card-meta"><strong>${esc(value)}</strong><span>${esc(meta)}</span></div>
+    <div class="facility-effect"><span>Operational effectiveness</span><b>${percent}%</b></div>
   </button>`;
 }
 function staffView(s){return `<div class="page-head"><div><div class="eyebrow">People</div><h1>Staff</h1><p>Build the leadership team around the manager.</p></div></div><div class="grid grid-3">${[['Chief Executive','Eleanor Shaw','Governance & growth'],['Finance Director','Daniel Mercer','Cash flow & debt'],['Sporting Director','Victor Hale','Recruitment & strategy'],['Manager',s.manager.name,'First-team football'],['Head of Academy','Sofia Reed','Youth development'],['Commercial Director','Marcus Vale','Sponsorship & revenue']].map(x=>`<section class="card card-pad"><div class="eyebrow">${x[2]}</div><h3 style="margin:8px 0 4px">${esc(x[1])}</h3><p class="muted">${x[0]}</p></section>`).join('')}</div>`;}
