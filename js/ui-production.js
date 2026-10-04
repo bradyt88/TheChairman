@@ -1,5 +1,6 @@
 import { estimatedClubValue, getOperationalStadiumCapacity } from './simulation.js';
 import { facilityUpgradeCost, facilityMaintenanceCost, facilityEffect, FACILITY_SPECS } from './state.js';
+import { STADIUM_CATALOGUE, STADIUM_TIERS } from './stadium-catalogue.js';
 
 const money=n=>`£${Math.round(n||0).toLocaleString('en-GB')}`;
 const shortMoney=n=>{const v=Math.abs(n||0),sign=(n||0)<0?'-':'';return v>=1000000?`${sign}£${(v/1000000).toFixed(1)}m`:v>=1000?`${sign}£${Math.round(v/1000)}k`:`${sign}£${Math.round(v)}`;};
@@ -24,40 +25,49 @@ function playerRow(p){const apps=p.appearances||0,mins=p.minutes||0,goals=p.goal
 function youthCard(p){const progress=Math.max(0,Math.min(100,((p.developmentProgress||0)/Math.max(1,(p.potential||70)-(p.overall||50)))*100));return `<div class="card card-pad"><div style="display:flex;justify-content:space-between;gap:10px"><span class="pill">${esc(p.position)} · Age ${p.age}</span><span class="pill">Potential ${p.potential}</span></div><h3 style="margin:12px 0 4px">${esc(p.name)}</h3><p class="muted">OVR ${p.overall} · Value ${money(p.value)} · ${esc(p.personality||'Balanced')}</p><div style="margin-top:12px"><div style="display:flex;justify-content:space-between;font-size:11px"><span>Development</span><span class="gold">${Math.round(p.development||0)}</span></div><div class="progress"><i style="width:${progress}%"></i></div></div><p class="muted" style="margin-top:10px">Promotes to first team at 20. First-team appearances can accelerate development and value.</p></div>`;}
 function squadView(s){const first=s.players||[],youth=s.youthSquad||[],avg=first.length?Math.round(first.reduce((t,p)=>t+(p.overall||0),0)/first.length):0,goals=first.reduce((t,p)=>t+(p.goals||0),0),assists=first.reduce((t,p)=>t+(p.assists||0),0),apps=first.reduce((t,p)=>t+(p.appearances||0),0);const groups=[['GK','Goalkeepers'],['DEF','Defenders'],['MID','Midfielders'],['ATT','Attackers']];const groupFor=p=>p.position==='GK'?'GK':['RB','LB','CB'].includes(p.position)?'DEF':['DM','CM','CAM','LM','RM'].includes(p.position)?'MID':'ATT';const playerCard=p=>{const pos=p.position||'CM',backup=p.backupPosition||({'GK':'GK','RB':'CB','LB':'CB','CB':'RB','DM':'CM','CM':'DM','CAM':'CM','LM':'LW','LW':'LM','RM':'RW','RW':'RM','ST':'CAM'}[pos]||pos);return `<article class="squad-player-card"><div class="player-shirt"><span>${esc(pos)}</span><b>${p.overall||0}</b></div><div class="player-card-main"><div class="player-card-top"><div><div class="eyebrow">${esc(p.personality||'Squad player')}</div><h3>${esc(p.name)}</h3></div><span class="player-status-dot ${(p.fitness||0)<60?'risk':''}"></span></div><div class="player-meta"><span>Age <b>${p.age}</b></span><span>OVR <b>${p.overall}</b></span><span>POT <b>${p.potential}</b></span><span>FIT <b>${Math.round(p.fitness||0)}%</b></span></div><div class="player-positions"><span class="position-chip primary">${esc(pos)}</span><span class="position-arrow">↳</span><span class="position-chip">${esc(backup)}</span><span class="position-note">Preferred · Backup</span></div><div class="player-formline"><span>FORM</span><i><em style="width:${Math.max(0,Math.min(100,p.form||0))}%"></em></i><b>${Math.round(p.form||0)}%</b></div><div class="player-card-actions"><button class="btn" data-action="sellPlayer" data-player="${esc(p.id)}">Transfer</button><button class="btn btn-primary" data-action="viewPlayer" data-player="${esc(p.id)}">Profile</button></div></div></article>`};return `<div class="squad-page"><div class="page-head"><div><div class="eyebrow">Football operations · First team</div><h1>Squad</h1><p>Build the institution around the players who carry its badge. Review roles, development and squad balance at a glance.</p></div><div class="pill squad-count-pill">${first.length}/25 first team</div></div><div class="grid grid-4 squad-kpis">${stat('First team',first.length,'Registered players')} ${stat('Youth squad',youth.length,'Development pathway')} ${stat('Avg OVR',avg,'Squad strength')} ${stat('Season output',`${goals} G · ${assists} A`,`${apps} appearances recorded`)}</div><section class="squad-command card"><div class="squad-command-title"><div><div class="eyebrow">Squad command</div><h2>First-team depth chart</h2><p>Preferred position is shown first. Backup position is the natural secondary role.</p></div><div class="squad-legend"><span><i class="legend-dot gold"></i>Preferred</span><span><i class="legend-dot"></i>Backup</span></div></div><div class="squad-groups">${groups.map(([key,label])=>{const players=first.filter(p=>groupFor(p)===key);return `<section class="position-group position-${key.toLowerCase()}"><div class="position-group-head"><div><span class="position-number">${String(players.length).padStart(2,'0')}</span><div><div class="eyebrow">${label}</div><h3>${key==='GK'?'Goalkeeper':key==='DEF'?'Defensive unit':key==='MID'?'Midfield unit':'Attacking unit'}</h3></div></div><span class="position-line"></span></div><div class="squad-player-grid">${players.map(playerCard).join('')||'<div class="empty squad-empty">No players registered in this unit.</div>'}</div></section>`}).join('')}</div></section><section class="card card-pad youth-panel"><div class="section-title"><h2>Youth pathway</h2><span>${youth.length}/6 development places</span></div>${youth.length?`<div class="grid grid-3">${youth.map(youthCard).join('')}</div>`:'<div class="notice">No youth players currently registered.</div>'}</section><section class="card card-pad lifecycle-panel"><div class="section-title"><h2>Career lifecycle</h2><span>Club records</span></div><div class="notice">Players progress from youth to first team, develop through performance and playing time, decline with age and are recorded in the retirement register.</div>${s.retiredPlayers?.length?`<div class="list" style="margin-top:12px">${s.retiredPlayers.slice(-5).reverse().map(p=>`<div class="list-row"><div><strong>${esc(p.name)}</strong><small>${esc(p.position)} · Retired at ${p.age} · Final OVR ${p.overall}</small></div><span class="pill">Retired</span></div>`).join('')}</div>`:''}</section></div>`;}
 function facilitiesView(s,c){
-  const f=s.facilities||{};
-  const stadium=f.stadium||{};
-  const capacity=getOperationalStadiumCapacity(s,c);
-  const condition=Math.max(0,Math.min(100,Number(stadium.condition??100)));
-  const level=Number(stadium.level||1);
+  const f=s.facilities||{},stadium=f.stadium||{},capacity=getOperationalStadiumCapacity(s,c);
+  const condition=Math.max(0,Math.min(100,Number(stadium.condition??100))),level=Number(stadium.level||1);
   const facilityData=[
-    ['stadium','▣','Stadium',stadium.name||'The Crown Arena',`Capacity ${capacity.toLocaleString()} · Level ${level}`,condition,'Stadium infrastructure, pitch and matchday operations.'],
+    ['stadium','▣','Stadium',stadium.name||'Crown Arena',`Capacity ${capacity.toLocaleString()} · Level ${level}`,condition,'Your stadium, pitch and matchday operation.'],
     ['training','◆','Training Facilities',`Level ${Number(f.training?.level||1)}`,`Condition ${Math.round(Number(f.training?.condition??100))}%`,Number(f.training?.condition??100),'Training environment, player development and fitness.'],
     ['youth','◇','Youth Facilities',`Level ${Number(f.youth?.level||1)}`,`Condition ${Math.round(Number(f.youth?.condition??100))}%`,Number(f.youth?.condition??100),'Academy infrastructure and long-term player development.'],
     ['medical','✚','Medical Facilities',`Level ${Number(f.medical?.level||1)}`,`Condition ${Math.round(Number(f.medical?.condition??100))}%`,Number(f.medical?.condition??100),'Recovery and medical infrastructure supporting the squad.']
   ];
   const cards=facilityData.map(([key,icon,title,value,meta,cond,description])=>facilityCard(key,icon,title,value,meta,description,facilityEffect(key,s))).join('');
-  return `
-    <div class="facilities-page">
-      <div class="page-head facilities-page-head">
-        <div><div class="eyebrow">Infrastructure · Facilities</div><h1>Facilities</h1><p>Manage the physical assets that support the club. Every investment changes the institution around the football.</p></div>
-        <div class="pill">4 Core Facilities</div>
-      </div>
-      <section class="facilities-hero">
-        <div><div class="eyebrow">THE CLUB'S INFRASTRUCTURE</div><h2>Build the institution behind the football.</h2><p>Level determines capability. Condition determines how effectively the asset performs. Maintenance protects the investment; upgrades cost real money.</p></div>
-        <div class="facilities-hero-stats"><div><span>Stadium</span><strong>${capacity.toLocaleString()}</strong><small>Seats</small></div><div><span>Stadium Level</span><strong>${level}</strong><small>Current level</small></div><div><span>Condition</span><strong>${Math.round(condition)}%</strong><small>Current state</small></div></div>
-      </section>
-      <section class="facilities-grid">${cards}</section>
-      <section class="card card-pad facilities-note"><div class="section-title"><h2>How the system works</h2><span>Live infrastructure</span></div><div class="grid grid-3"><div class="notice"><strong>Upgrade</strong><br>Raises capability and changes what the facility can deliver.</div><div class="notice"><strong>Maintenance</strong><br>Restores condition for a direct cash cost.</div><div class="notice"><strong>Neglect</strong><br>Condition naturally falls over time and effectiveness follows it.</div></div></section>
-    </div>`;
+  return `<div class="facilities-page">
+    <div class="page-head facilities-page-head"><div><div class="eyebrow">Infrastructure · Facilities</div><h1>Facilities</h1><p>Manage the physical assets that support the club. Every investment changes the institution around the football.</p></div><div class="pill">4 Core Facilities</div></div>
+    <section class="facilities-hero"><div><div class="eyebrow">THE CLUB'S INFRASTRUCTURE</div><h2>Build the institution behind the football.</h2><p>Stadiums are purchased from the catalogue. Training, youth and medical facilities are developed separately. Condition affects effectiveness across the club.</p></div>
+      <div class="facilities-hero-stats"><div><span>Stadium</span><strong>${capacity.toLocaleString()}</strong><small>Seats</small></div><div><span>Stadium Level</span><strong>${level}</strong><small>Current level</small></div><div><span>Condition</span><strong>${Math.round(condition)}%</strong><small>Current state</small></div></div></section>
+    <section class="facilities-grid">${cards}</section>
+    <section class="card card-pad facilities-note"><div class="section-title"><h2>Infrastructure decisions</h2><span>Live club state</span></div><div class="grid grid-3"><div class="notice"><strong>Stadium catalogue</strong><br>Browse all 30 stadiums. Affordability does not hide options.</div><div class="notice"><strong>Maintenance</strong><br>Restore condition for a direct cash cost.</div><div class="notice"><strong>Neglect</strong><br>Condition falls naturally and effectiveness follows it.</div></div></section>
+  </div>`;
 }
 function facilityCard(key,icon,title,value,meta,description,effect){
   const percent=Math.round(Math.max(.65,Math.min(1.3,effect))*100);
+  const action=key==='stadium'?'Catalogue →':'Manage →';
   return `<button type="button" class="facility-card card" data-action="openFacility" data-facility="${key}">
-    <div class="facility-card-top"><span class="facility-icon">${icon}</span><span class="pill">Manage →</span></div>
+    <div class="facility-card-top"><span class="facility-icon">${icon}</span><span class="pill">${action}</span></div>
     <div class="eyebrow">FACILITY</div><h2>${esc(title)}</h2><p>${esc(description)}</p>
     <div class="facility-card-meta"><strong>${esc(value)}</strong><span>${esc(meta)}</span></div>
     <div class="facility-effect"><span>Operational effectiveness</span><b>${percent}%</b></div>
   </button>`;
+}
+function stadiumCatalogueView(s){
+  const current=s.facilities?.stadium?.catalogueId||s.facilities?.stadium?.id;
+  const tiers=STADIUM_TIERS.map(t=>{
+    const cards=STADIUM_CATALOGUE.filter(x=>x.tier===t.id).map(st=>{
+      const owned=st.id===current;
+      return `<article class="stadium-catalogue-card ${owned?'is-owned':''}">
+        <div class="stadium-art-placeholder"><span>${st.level===0?'STARTER':'LEVEL '+st.level}</span><strong>${esc(st.name)}</strong><small>Artwork slot</small></div>
+        <div class="stadium-catalogue-body"><div class="stadium-catalogue-top"><span class="pill">${esc(t.label)}</span><span class="pill">${st.capacity.toLocaleString()} seats</span></div>
+        <h3>${esc(st.name)}</h3><p class="muted">${esc(st.description)}</p>
+        <div class="stadium-catalogue-stats"><span>Purchase <b>${st.purchaseCost?money(st.purchaseCost):'Starter'}</b></span><span>Maintenance <b>${money(st.maintenance)}</b></span><span>Matchday potential <b>${money(st.matchdayRevenue)}</b></span><span>Commercial <b>${st.commercialPotential}/100</b></span><span>Security <b>${st.securityRequirement}</b></span><span>Pitch <b>${esc(st.pitchStandard)}</b></span></div>
+        <div class="actions" style="margin-top:12px"><button class="btn ${owned?'':'btn-primary'}" data-action="${owned?'renameStadium':'purchaseStadium'}" data-stadium="${st.id}">${owned?'Rename stadium':st.purchaseCost?'Purchase / Replace':'Select starter'}</button></div></div>
+      </article>`;
+    }).join('');
+    return `<section class="stadium-tier-section"><div class="section-title"><div><h2>${esc(t.label)}</h2><span>${esc(t.description)}</span></div><span class="pill">6 stadiums</span></div><div class="stadium-catalogue-grid">${cards}</div></section>`;
+  }).join('');
+  return `<div class="page-head"><div><div class="eyebrow">Facilities · Stadium Catalogue</div><h1>Stadium Catalogue</h1><p>Every available stadium is shown. The Chairman decides whether the financial commitment makes sense.</p></div><button class="btn" data-action="openFacility" data-facility="stadium">Back to Stadium</button></div>${tiers}`;
 }
 function staffView(s){return `<div class="page-head"><div><div class="eyebrow">People</div><h1>Staff</h1><p>Build the leadership team around the manager.</p></div></div><div class="grid grid-3">${[['Chief Executive','Eleanor Shaw','Governance & growth'],['Finance Director','Daniel Mercer','Cash flow & debt'],['Sporting Director','Victor Hale','Recruitment & strategy'],['Manager',s.manager.name,'First-team football'],['Head of Academy','Sofia Reed','Youth development'],['Commercial Director','Marcus Vale','Sponsorship & revenue']].map(x=>`<section class="card card-pad"><div class="eyebrow">${x[2]}</div><h3 style="margin:8px 0 4px">${esc(x[1])}</h3><p class="muted">${x[0]}</p></section>`).join('')}</div>`;}
 function inboxView(s){return `<div class="page-head"><div><div class="eyebrow">Executive correspondence</div><h1>Inbox</h1><p>Important messages, reviews and decisions from around the club.</p></div></div><section class="card card-pad"><div class="list">${s.inbox.length?s.inbox.map(n=>`<div class="list-row"><div><span class="pill">${esc(n.type)}</span><strong style="display:block;margin-top:6px">${esc(n.title)}</strong><small>${esc(n.text)}</small></div><span class="pill">${n.unread?'Unread':'Read'}</span></div>`).join(''):`<div class="notice">No new correspondence.</div>`}</div></section>`;}
