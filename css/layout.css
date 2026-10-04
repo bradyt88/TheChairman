@@ -143,3 +143,15 @@ body{background:#04060a}
 .facilities-note{margin-top:18px}
 @media(max-width:1100px){.facilities-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.facilities-hero{grid-template-columns:1fr}.facilities-hero-stats{min-height:120px}}
 @media(max-width:560px){.facilities-grid{grid-template-columns:1fr}.facilities-hero{padding:20px}.facilities-hero-stats{grid-template-columns:1fr}.facility-card{min-height:240px}}
+
+
+/* FACILITIES MANAGEMENT */
+.facility-effect{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:10px;border-top:1px solid rgba(216,175,78,.12);font-size:9px;color:#87909c;text-transform:uppercase;letter-spacing:.08em}
+.facility-effect b{color:var(--gold-soft);font-size:12px}
+.facility-management-head{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.facility-management-head>div{padding:14px;border:1px solid rgba(216,175,78,.16);border-radius:12px;background:rgba(216,175,78,.035)}
+.facility-management-head strong{display:block;margin-top:6px;font-size:20px;color:#fff}
+.facility-management-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.facility-management-actions h3{margin:7px 0 4px;color:#fff}
+.facility-management-actions .btn{width:100%;margin-top:10px}
+@media(max-width:600px){.facility-management-head,.facility-management-actions{grid-template-columns:1fr}}
