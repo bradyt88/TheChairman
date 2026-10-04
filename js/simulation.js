@@ -38,7 +38,7 @@ export function advanceWeek(state,world,playerPool=[]){let won=false,lost=false;
   for(const key of ['stadium','training','youth','medical']){
     if(!s.facilities[key])continue;
     const current=Number(s.facilities[key].condition??100);
-    const decay=key==='stadium'?1.5:key==='training'?1.1:key==='youth'?.9:.8;
+    const decay=key==='stadium'?1.5:key==='training'?1.1:key==='youth'?0.9:0.8;
     s.facilities[key].condition=Math.max(0,Math.round((current-decay)*10)/10);
   }
   if(s.week%52===0)s.year=(s.year||2026)+1;const opponents=world.clubs.filter(c=>c.leagueId===club?.leagueId&&c.id!==s.clubId),opp=opponents.length?opponents[(s.week*7)%opponents.length]:null,power=teamStrengthFor(s.players),opponentPlayers=(playerPool||[]).filter(p=>p.clubId===opp?.id),opponentPower=opponentPlayers.length?teamStrengthFor(opponentPlayers):opp?.reputation||50,decision=s.pendingMatchdayDecision||'neutral',preview=matchResult({...s,week:s.week-1},world,decision,playerPool),result=s.pendingMatchdayResult||preview.result,home=preview.home; s.pendingMatchdayResult=null;{const [rh,ra]=parseGoals(result);won=home?rh>ra:ra>rh;lost=home?rh<ra:ra<rh;}const updatedPlayers=simulateSquadMatch(s,result,power,opponentPower,home),finance=calculateFinance({...s,players:updatedPlayers},club,{opponent:opp,home,won,lost});const trainingEffect=facilityEffect('training',s),medicalEffect=facilityEffect('medical',s);
