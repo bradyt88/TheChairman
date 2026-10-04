@@ -173,3 +173,13 @@ body{background:#04060a}
 .stadium-catalogue-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:12px}
 @media(max-width:1050px){.stadium-catalogue-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:680px){.stadium-catalogue-grid{grid-template-columns:1fr}}
+
+.starter-stadium-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+.starter-stadium-option{min-height:120px;text-align:left;padding:16px;border:1px solid rgba(255,255,255,.08);border-radius:12px;background:rgba(255,255,255,.025);color:inherit;cursor:pointer;display:flex;justify-content:space-between;align-items:flex-end;transition:.18s ease}
+.starter-stadium-option:hover,.starter-stadium-option.selected{border-color:rgba(216,175,78,.65);background:rgba(216,175,78,.08);transform:translateY(-2px)}
+.starter-stadium-option h3{margin:8px 0 3px;font-size:17px}.starter-stadium-option p{margin:0;color:var(--muted);font-size:10px}
+.starter-check{width:28px;height:28px;border:1px solid rgba(216,175,78,.2);border-radius:50%;display:grid;place-items:center;color:transparent}
+.starter-stadium-option.selected .starter-check{color:var(--gold-soft);border-color:var(--gold-soft);background:rgba(216,175,78,.14)}
+.setup-facility select{margin:10px 0;width:100%}
+@media(max-width:800px){.starter-stadium-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.starter-stadium-grid{grid-template-columns:1fr}}
