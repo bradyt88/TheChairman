@@ -9,6 +9,15 @@ import { stadiumById, STADIUM_CATALOGUE } from './stadium-catalogue.js';
 const root=document.querySelector('#app');
 let world, allPlayers, state, club;
 
+// Single state owner for the current career. UI enhancement modules must never
+// maintain a second copy of the save in localStorage.
+window.__THE_CHAIRMAN__={
+  getState:()=>state,
+  save:()=>{if(state)saveGame(state);},
+  render:()=>{if(state&&club)render();},
+  commit:()=>{if(state)saveGame(state);}
+};
+
 async function boot(){try{world=await loadWorld();allPlayers=generatePlayers(world.clubs);const saved=loadGame();if(saved){club=world.clubs.find(c=>c.id===saved.clubId);state=club?migrateCareer(saved,club,allPlayers):null;}if(state&&club)render();else renderStart();}catch(e){root.innerHTML=`<div style="padding:40px;color:#fff"><h1>The Chairman</h1><p>${esc(e.message)}</p></div>`;}}
 function render(){if(!state||!club){document.body.classList.remove('facilities-environment');return renderStart();}document.body.classList.toggle('facilities-environment',state.activeView==='facilities');renderShell(root,state,club);renderView(root,state,club,world);if(state.activeView==='transfers')renderTransferMarket();bind();saveGame(state);}
 function renderTransferMarket(){const view=document.querySelector('#view');if(!view)return;const market=Array.isArray(state.transferMarket)?state.transferMarket:[];const cards=market.map(p=>{const fair=Math.round(p.value||0),aggressive=Math.round(fair*1.14);return `<section class="card card-pad"><div style="display:flex;justify-content:space-between;gap:10px"><span class="pill">${esc(p.position)} · OVR ${p.overall}</span><span class="pill">${p.status==='negotiating'?'Talks open':'Available'}</span></div><h3 style="margin:14px 0 4px">${esc(p.name)}</h3><p class="muted">Age ${p.age} · Potential ${p.potential} · Value ${money(p.value)} · Wage ${money(p.wage)}/wk</p><p class="muted">Personality: ${esc(p.personality)}</p><div class="notice" style="margin-top:12px">Fair offer: <strong>${money(fair)}</strong> · Aggressive offer: <strong>${money(aggressive)}</strong></div><button class="btn btn-primary" style="margin-top:12px" data-action="negotiate" data-player="${esc(p.playerId)}">${p.status==='negotiating'?'Continue negotiation':'Open negotiation'}</button></section>`;}).join('');view.innerHTML=`<div class="page-head"><div><div class="eyebrow">Sporting strategy</div><h1>Transfer Room</h1><p>Negotiate the deal, understand the cost, then decide.</p></div><div class="pill">Budget ${money(state.transferBudget)}</div></div><section class="card card-pad" style="margin-bottom:18px"><div class="section-title"><h2>Market intelligence</h2><span>Weekly refresh</span></div><div class="notice">Eight targets are monitored at a time. The market is refreshed each week; the available pool changes with the football world.</div></section><div class="grid grid-4">${cards}</div>`;}
