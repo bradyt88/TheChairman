@@ -4,11 +4,14 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
+  pull_request:
 
 jobs:
   smoke:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -17,14 +20,18 @@ jobs:
         run: npm init -y && npm install --no-save playwright
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
-      - name: Test live module graph
+      - name: Test local module graph
         shell: bash
         run: |
+          python3 -m http.server 4173 >/tmp/the-chairman-server.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID' EXIT
+          sleep 2
           cat > smoke.mjs <<'EOF'
           import { chromium } from 'playwright';
           const browser = await chromium.launch({headless:true});
           const page = await browser.newPage();
-          await page.goto('https://bradyt88.github.io/TheChairman/', {waitUntil:'domcontentloaded', timeout:60000});
+          await page.goto('http://127.0.0.1:4173/', {waitUntil:'domcontentloaded', timeout:60000});
           const modules = ['data.js','state.js','storage.js','player-model.js','simulation.js','ui-production.js','matchday-fix.js'];
           const results = await page.evaluate(async modules => {
             const out=[];

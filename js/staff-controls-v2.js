@@ -5,8 +5,9 @@
   const H=s=>{let n=0;for(let i=0;i<String(s).length;i++)n=(n*31+String(s).charCodeAt(i))>>>0;return n};
   const E=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const M=n=>`£${Math.round(Number(n)||0).toLocaleString('en-GB')}`;
-  const L=()=>{try{return JSON.parse(localStorage.getItem(K))}catch{return null}};
-  const S=x=>{try{localStorage.setItem(K,JSON.stringify(x))}catch{}};
+  const owner=()=>window.__THE_CHAIRMAN__;
+  const L=()=>owner()?.getState?.()||(()=>{try{return JSON.parse(localStorage.getItem(K))}catch{return null}})();
+  const S=x=>{if(owner()?.commit){owner().commit();return;}try{localStorage.setItem(K,JSON.stringify(x))}catch{}};
   const CS=s=>Array.isArray(s?.staffDatabase)?s.staffDatabase.filter(x=>x.clubId===s.clubId&&x.status!=='freeAgent'):[];
   const RS=(s,r)=>CS(s).find(x=>x.role===r);
   function B(t,a,id='',ex=''){return`<button type="button" class="btn ${a==='profile'?'btn-primary':''}" data-staff-action="${a}" data-staff-id="${E(id)}" ${ex}>${t}</button>`}
