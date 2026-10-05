@@ -4,6 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
+  pull_request:
 
 jobs:
   smoke:
@@ -17,9 +18,13 @@ jobs:
         run: npm init -y && npm install --no-save playwright
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
-      - name: Test live module graph
+      - name: Test local module graph
         shell: bash
         run: |
+          python3 -m http.server 4173 >/tmp/the-chairman-server.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID' EXIT
+          sleep 2
           cat > smoke.mjs <<'EOF'
           import { chromium } from 'playwright';
           const browser = await chromium.launch({headless:true});
